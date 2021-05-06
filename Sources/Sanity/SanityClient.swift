@@ -88,7 +88,7 @@ public class SanityClient {
                     if let apiKey = config.apiKey {
                         queryItems.append(.init(name: "apiKey", value: apiKey))
                     }
-                    let paths: [String] = [config.version.string, "data", "query", config.dataset]
+                    let paths: [String] = ["data", "query", config.dataset]
                     return getURLForPaths(paths, queryItems: queryItems, config: config)
 
                 case let .listen(query, params, config):
@@ -101,7 +101,7 @@ public class SanityClient {
                         queryItems.append(.init(name: "apiKey", value: apiKey))
                     }
 
-                    let paths: [String] = [config.version.string, "data", "listen", config.dataset]
+                    let paths: [String] = ["data", "listen", config.dataset]
                     return getURLForPaths(paths, queryItems: queryItems, config: config)
                 }
             }
@@ -111,7 +111,7 @@ public class SanityClient {
                 components.scheme = "https"
                 components.host = config.apiHost.hostForProjectId(config.projectId)
 
-                components.path = "/" + paths.joined(separator: "/")
+                components.path = "/" + config.version.string + "/" + paths.joined(separator: "/")
                 components.queryItems = queryItems
                 return components.url!
             }
