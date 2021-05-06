@@ -27,7 +27,7 @@ final class SanityImageUrlTests: XCTestCase {
 
         assert(imageWithNoCropSpecified.validImage == false)
 
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let url = client.imageURL(imageWithNoCropSpecified).URL()
         assert(url == nil)
     }
 
@@ -48,7 +48,7 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let url = client.imageURL(imageWithNoCropSpecified).URL()
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg")
     }
 
@@ -69,7 +69,9 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 100)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(100)
+            .URL()
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?w=100")
     }
 
@@ -90,7 +92,10 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified, height: 100)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .height(100)
+            .URL()
+
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?h=100")
     }
 
@@ -111,7 +116,11 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 30, height: 100)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(30)
+            .height(100)
+            .URL()
+
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=150,0,900,3000&w=30&h=100")
     }
 
@@ -132,7 +141,10 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 100, height: 30)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(100)
+            .height(30)
+            .URL()
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=0,600,2000,600&w=100&h=30")
     }
 
@@ -148,7 +160,7 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let url = client.imageURL(imageWithNoCropSpecified).URL()
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg")
     }
 
@@ -164,7 +176,9 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 100)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(100)
+            .URL()
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?w=100")
     }
 
@@ -180,7 +194,10 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified, height: 100)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .height(100)
+            .URL()
+
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?h=100")
     }
 
@@ -196,7 +213,11 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 500, height: 600)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(500)
+            .height(600)
+            .URL()
+
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-1000x1200.jpg?w=500&h=600")
     }
 
@@ -212,7 +233,11 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 30, height: 100)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(30)
+            .height(100)
+            .URL()
+
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=550,0,900,3000&w=30&h=100")
     }
 
@@ -226,7 +251,10 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 100, height: 30)
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(100)
+            .height(30)
+            .URL()
         assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=0,1200,2000,600&w=100&h=30")
     }
 
@@ -250,7 +278,10 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified, width: 30, height: 100)
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=240,300,720,2400&w=30&h=100")
+        let url = client.imageURL(imageWithNoCropSpecified)
+            .width(30)
+            .height(100)
+
+        assert(url.URL()!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=240,300,720,2400&w=30&h=100")
     }
 }
