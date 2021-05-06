@@ -1,7 +1,6 @@
+// MIT License
 //
-// The MIT License (MIT)
-// Copyright (C) 2021 - 2021.
-//
+// Copyright (c) 2021 Sanity.io
 
 import Combine
 import Sanity
@@ -189,7 +188,10 @@ struct ContentView: View {
                 ForEach(self.moviesFetcher.movies, id: \._id) { movie in
                     VStack {
                         ZStack {
-                            WebImage(url: SanityDemoApp.sanityClient.imageURL(movie.poster, width: 400, height: 700))
+                            WebImage(url: SanityDemoApp.sanityClient.imageURL(movie.poster)
+                                .width(400)
+                                .height(700)
+                                .URL())
                                 .resizable()
                                 .scaledToFit()
                             VStack {
