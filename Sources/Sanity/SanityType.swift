@@ -1,7 +1,6 @@
+// MIT License
 //
-// The MIT License (MIT)
-// Copyright (C) 2021 - 2021.
-//
+// Copyright (c) 2021 Sanity.io
 
 public struct SanityType {
     public enum SanityDecodingError: Error {

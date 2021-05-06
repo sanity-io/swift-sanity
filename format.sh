@@ -3,9 +3,17 @@ if [ "$#" -eq 0 ]; then
     files=(Sources/ Tests/ Example/)
 fi
 
-copyright="\
-\n\
-The MIT License (MIT)\nCopyright (C) 2021 - `date +'%Y'`.\n\
+YEAR=`date "+%Y"`
+if [ $YEAR = "2021" ]; then
+    YEARSTR="2021"
+else
+    YEARSTR="2021 - $YEAR"
+fi
+
+copyright="
+// MIT License
+// 
+// Copyright (c) $YEARSTR Sanity.io
 "
 
 swiftformat \
