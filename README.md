@@ -26,7 +26,11 @@ let image = SanityType.Image(
         y: 0.3
     )
 )
-let url = client.imageURL(image, width: 30, height: 100)
+let url = client.imageURL(image)
+    .width(30)
+    .height(100)
+    .URL()
+
 // => "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=240,300,720,2400&w=30&h=100"
 
 ```
