@@ -1,7 +1,6 @@
+// MIT License
 //
-// The MIT License (MIT)
-// Copyright (C) 2021 - 2021.
-//
+// Copyright (c) 2021 Sanity.io
 
 import Foundation
 
@@ -21,36 +20,35 @@ extension URL {
     }
 }
 
-public class SanityImageUrl {
+public struct SanityImageUrl {
     public let image: SanityType.Image
     private let projectId: String
     private let dataset: String
 
-    private var width: Int?
-    private var height: Int?
-    private var maxWidth: Int?
-    private var maxHeight: Int?
-    private var minWidth: Int?
-    private var minHeight: Int?
-    private var blur: Int?
-    private var sharpen: Int?
-    private var dpr: Int?
+    public var width: Int?
+    public var height: Int?
+    public var maxWidth: Int?
+    public var maxHeight: Int?
+    public var minWidth: Int?
+    public var minHeight: Int?
+    public var blur: Int?
+    public var sharpen: Int?
+    public var dpr: Int?
 
-    private var quality: Int?
-    private var saturation: Int?
-    private var pad: Double?
+    public var quality: Int?
+    public var saturation: Int?
+    public var pad: Double?
 
-    private var invert: Bool?
-    private var flipHorizontal: Bool?
-    private var flipVertical: Bool?
+    public var invert: Bool?
+    public var flipHorizontal: Bool?
+    public var flipVertical: Bool?
 
-    private var rect: Rect?
-    private var focalPoint: FocalPoint?
-    private var auto: Auto?
-    private var format: ImageFormat?
-    private var orientation: Orientation?
-    private var fit: Fit?
-    private var crop: CropMode?
+    public var focalPoint: FocalPoint?
+    public var auto: Auto?
+    public var format: ImageFormat?
+    public var orientation: Orientation?
+    public var fit: Fit?
+    public var crop: CropMode?
 
     private struct Rect {
         let left: Int
@@ -108,7 +106,7 @@ public class SanityImageUrl {
         self.dataset = dataset
     }
 
-    func URL() -> URL? {
+    public func URL() -> URL? {
         if image.validImage == false {
             return nil
         }
@@ -118,9 +116,7 @@ public class SanityImageUrl {
 
         var queryItems: [URLQueryItem] = []
 
-        self.calculateRect()
-
-        if let rect = self.rect, rect.left != 0 || rect.top != 0 || rect.height != image.height || rect.width != image.width {
+        if let rect = self.calculateRect(), rect.left != 0 || rect.top != 0 || rect.height != image.height || rect.width != image.width {
             queryItems.append(.init(name: "rect", value: "\(rect.left),\(rect.top),\(rect.width),\(rect.height)"))
         }
 
@@ -207,9 +203,13 @@ public class SanityImageUrl {
         let bottom: Double
     }
 
-    private func calculateRect() {
+    private func calculateRect() -> Rect? {
         if image.validImage == false {
-            return
+            return nil
+        }
+
+        guard let width = self.width, let height = self.height else {
+            return nil
         }
 
         let cropSpec: Rect
@@ -256,10 +256,6 @@ public class SanityImageUrl {
                 right: hotSpotCenterX + hotSpotHorizontalRadius,
                 bottom: hotSpotCenterY + hotSpotVerticalRadius
             )
-        }
-
-        guard let width = self.width, let height = self.height else {
-            return
         }
 
         let desiredAspectRatio = Double(width) / Double(height)
@@ -313,119 +309,132 @@ public class SanityImageUrl {
             )
         }
 
-        self.rect = rect
-        self.width = width
-        self.height = height
+        return rect
     }
 
     public func width(_ width: Int?) -> Self {
-        self.width = width
-        return self
+        var imageUrl = self
+        imageUrl.width = width
+        return imageUrl
     }
 
     public func height(_ height: Int?) -> Self {
-        self.height = height
-        return self
+        var imageUrl = self
+        imageUrl.height = height
+        return imageUrl
     }
 
     public func maxWidth(_ maxWidth: Int?) -> Self {
-        self.maxWidth = maxWidth
-        return self
+        var imageUrl = self
+        imageUrl.maxWidth = maxWidth
+        return imageUrl
     }
 
     public func maxHeight(_ maxHeight: Int?) -> Self {
-        self.maxHeight = maxHeight
-        return self
+        var imageUrl = self
+        imageUrl.maxHeight = maxHeight
+        return imageUrl
     }
 
     public func minWidth(_ minWidth: Int?) -> Self {
-        self.minWidth = minWidth
-        return self
+        var imageUrl = self
+        imageUrl.minWidth = minWidth
+        return imageUrl
     }
 
     public func minHeight(_ minHeight: Int?) -> Self {
-        self.minHeight = minHeight
-        return self
+        var imageUrl = self
+        imageUrl.minHeight = minHeight
+        return imageUrl
     }
 
     public func blur(_ blur: Int?) -> Self {
-        self.blur = blur
-        return self
+        var imageUrl = self
+        imageUrl.blur = blur
+        return imageUrl
     }
 
     public func sharpen(_ sharpen: Int?) -> Self {
-        self.sharpen = sharpen
-        return self
+        var imageUrl = self
+        imageUrl.sharpen = sharpen
+        return imageUrl
     }
 
     public func quality(_ quality: Int?) -> Self {
-        self.quality = quality
-        return self
+        var imageUrl = self
+        imageUrl.quality = quality
+        return imageUrl
     }
 
     public func saturation(_ saturation: Int?) -> Self {
-        self.saturation = saturation
-        return self
+        var imageUrl = self
+        imageUrl.saturation = saturation
+        return imageUrl
     }
 
     public func dpr(_ dpr: Int?) -> Self {
-        self.dpr = dpr
-        return self
+        var imageUrl = self
+        imageUrl.dpr = dpr
+        return imageUrl
     }
 
     public func pad(_ pad: Double?) -> Self {
-        self.pad = pad
-        return self
+        var imageUrl = self
+        imageUrl.pad = pad
+        return imageUrl
     }
 
     public func invert(_ invert: Bool?) -> Self {
-        self.invert = invert
-        return self
+        var imageUrl = self
+        imageUrl.invert = invert
+        return imageUrl
     }
 
     public func flipHorizontal(_ flipHorizontal: Bool?) -> Self {
-        self.flipHorizontal = flipHorizontal
-        return self
+        var imageUrl = self
+        imageUrl.flipHorizontal = flipHorizontal
+        return imageUrl
     }
 
     public func flipVertical(_ flipVertical: Bool?) -> Self {
-        self.flipVertical = flipVertical
-        return self
+        var imageUrl = self
+        imageUrl.flipVertical = flipVertical
+        return imageUrl
     }
 
     public func focalPoint(_ focalPoint: FocalPoint?) -> Self {
-        self.focalPoint = focalPoint
-
-        return self
+        var imageUrl = self
+        imageUrl.focalPoint = focalPoint
+        return imageUrl
     }
 
     public func auto(_ auto: Auto?) -> Self {
-        self.auto = auto
-
-        return self
+        var imageUrl = self
+        imageUrl.auto = auto
+        return imageUrl
     }
 
     public func format(_ format: ImageFormat?) -> Self {
-        self.format = format
-
-        return self
+        var imageUrl = self
+        imageUrl.format = format
+        return imageUrl
     }
 
     public func orientation(_ orientation: Orientation?) -> Self {
-        self.orientation = orientation
-
-        return self
+        var imageUrl = self
+        imageUrl.orientation = orientation
+        return imageUrl
     }
 
     public func fit(_ fit: Fit?) -> Self {
-        self.fit = fit
-
-        return self
+        var imageUrl = self
+        imageUrl.fit = fit
+        return imageUrl
     }
 
     public func crop(_ crop: CropMode?) -> Self {
-        self.crop = crop
-
-        return self
+        var imageUrl = self
+        imageUrl.crop = crop
+        return imageUrl
     }
 }
