@@ -16,8 +16,8 @@ let package = Package(
             targets: ["Sanity"]),
     ],
     dependencies: [
-        .package(name: "EventSource", url: "https://github.com/inaka/EventSource.git", ._revisionItem("78934b361891c7d0fa3d399d128e959f0c94d267")),
-        .package(name: "GenericJSON", url: "https://github.com/zoul/generic-json-swift", ._exactItem("2.0.1"))
+        .package(name: "EventSource", url: "https://github.com/inaka/EventSource.git", .revision("78934b361891c7d0fa3d399d128e959f0c94d267")),
+        .package(name: "GenericJSON", url: "https://github.com/zoul/generic-json-swift", .exact("2.0.1"))
         // .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
