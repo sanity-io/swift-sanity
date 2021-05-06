@@ -75,11 +75,6 @@ extension SanityType.Image: Decodable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try container.decode(String.self, forKey: ._type)
-        if type != "image" {
-            throw SanityType.SanityDecodingError.invalidType(type: type)
-        }
-
         let asset = try container.decode(SanityType.Ref.self, forKey: .asset)
         let crop = try? container.decode(Crop.self, forKey: .crop)
         let hotspot = try? container.decode(Hotspot.self, forKey: .hotspot)
