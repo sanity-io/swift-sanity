@@ -108,21 +108,29 @@ public class SanityClient {
             var urlRequest: URLRequest {
                 switch self {
                 case let .fetch(query, params, config):
-                    let queryItems: [URLQueryItem] = [
-                        .init(name: "query", value: query),
-                    ] + self.parseParams(params)
+                    let queryItems = queryItems(defaults: [
+                        "query": query,
+                    ], params: params)
 
                     let path = "/data/query/\(config.dataset)"
                     return config.getURLRequest(path: path, queryItems: queryItems)
 
                 case let .listen(query, params, config):
-                    let queryItems: [URLQueryItem] = [
-                        .init(name: "query", value: query),
-                        .init(name: "includeResult", value: "true"),
-                    ] + parseParams(params)
-
+                    let queryItems = queryItems(defaults: [
+                        "query": query,
+                        "includeResult": "true"
+                    ], params: params)
+                    
                     let path = "/data/listen/\(config.dataset)"
                     return config.getURLRequest(path: path, queryItems: queryItems)
+                }
+            }
+            
+            private func queryItems(defaults: [String: Any], params: [String:Any]) -> [URLQueryItem] {
+                let mergedParams: [String: Any] = defaults.merging(params) { _, new in new }
+                
+                return mergedParams.map { key, value in
+                    URLQueryItem(name: key, value: String(describing: value))
                 }
             }
 

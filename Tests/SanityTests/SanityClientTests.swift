@@ -58,13 +58,6 @@ final class SanityClientQueryTests: XCTestCase {
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(query: "*", params: [:], config: config)
         XCTAssertEqual(fetch.urlRequest.url!.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*")
-
-        let listen = SanityClient.Query<String>.apiURL.listen(query: "*", params: [:], config: config)
-
-        XCTAssertEqual(
-            listen.urlRequest.url!.absoluteString,
-            "https://rwmuledy.api.sanity.io/v1/data/listen/prod?query=*&includeResult=true"
-        )
     }
 
     func testQueryURLRequestAuthToken() {
@@ -113,10 +106,39 @@ final class SanityClientQueryTests: XCTestCase {
             params: ["includeResult": false],
             config: config
         )
-
-        XCTAssertEqual(
-            listen.urlRequest.url!.absoluteString,
-            "https://rwmuledy.api.sanity.io/v1/data/listen/prod?query=*&includeResult=false"
+        
+        let url = listen.urlRequest.url!
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        
+        let query = components.queryItems?.first(where: { $0.name == "query" })?.value
+        XCTAssertEqual(query, "*")
+        
+        let includeResult = components.queryItems?.first(where: { $0.name == "includeResult" })?.value
+        XCTAssertEqual(includeResult, "false")
+    }
+    
+    func testAddParams() {
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "prod",
+            version: .v1,
+            token: nil,
+            useCdn: nil
         )
+
+        let fetch = SanityClient.Query<String>.apiURL.fetch(
+            query: "*",
+            params: ["kustom": 29, "another": "one"],
+            config: config
+        )
+
+        let url = fetch.urlRequest.url!
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        
+        let kustom = components.queryItems?.first(where: { $0.name == "kustom" })?.value
+        XCTAssertEqual(kustom, "29")
+        
+        let another = components.queryItems?.first(where: { $0.name == "another" })?.value
+        XCTAssertEqual(another, "one")
     }
 }
