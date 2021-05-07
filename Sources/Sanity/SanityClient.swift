@@ -20,7 +20,15 @@ public class SanityClient {
         let dataset: String
         let version: APIVersion
         let token: String?
-        let apiHost: APIHost = .productionCDN
+        let useCdn: Bool?
+        var apiHost: APIHost {
+            get {
+                if (useCdn == true) {
+                    return .productionCDN
+                }
+                return .production
+            }
+        }
 
         enum APIHost {
             case production
@@ -66,6 +74,14 @@ public class SanityClient {
                 }
             }
         }
+        
+        func getURL(path: String = "/") -> URL {
+            var components = URLComponents()
+            components.scheme = "https"
+            components.host = self.apiHost.hostForProjectId(self.projectId)
+            components.path = "/" + self.version.string + path
+            return components.url!
+        }
     }
 
     public struct Query<T: Decodable> {
@@ -107,11 +123,8 @@ public class SanityClient {
             }
 
             private func getURLForPaths(_ paths: [String], queryItems: [URLQueryItem], config: Config) -> URL {
-                var components = URLComponents()
-                components.scheme = "https"
-                components.host = config.apiHost.hostForProjectId(config.projectId)
-
-                components.path = "/" + config.version.string + "/" + paths.joined(separator: "/")
+                let url = config.getURL(path: "/" + paths.joined(separator: "/"))
+                var components = URLComponents(string: url.absoluteString)!
                 components.queryItems = queryItems
                 return components.url!
             }
@@ -123,9 +136,13 @@ public class SanityClient {
             }
         }
     }
+    
+    public init(config: Config) {
+        self.config = config
+    }
 
-    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, apiKey: String? = nil) {
-        self.config = Config(projectId: projectId, dataset: dataset, version: version, token: apiKey)
+    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, token: String? = nil, useCdn: Bool? = nil) {
+        self.config = Config(projectId: projectId, dataset: dataset, version: version, token: token, useCdn: useCdn)
     }
 
     public func query<T: Decodable>(_: T.Type, query: String, params: [String: Any] = [:]) -> Query<T> {
@@ -134,5 +151,9 @@ public class SanityClient {
 
     public func query(query: String, params: [String: Any] = [:]) -> Query<JSON> {
         Query<JSON>(config: config, query: query, params: params, urlSession: urlSession)
+    }
+    
+    public func getURL(path: String) -> URL {
+        return config.getURL(path: path)
     }
 }
