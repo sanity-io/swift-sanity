@@ -5,206 +5,115 @@
 @testable import Sanity
 import XCTest
 
+let hotspotImage = SanityType.Image(
+    asset: SanityType.Ref(
+        _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
+        _type: "reference"
+    ),
+    crop: nil,
+    hotspot: SanityType.Image.Hotspot(
+        height: 0.3,
+        width: 0.3,
+        x: 0.3,
+        y: 0.3
+    )
+)
+
+let noHotspotNoCropImage = SanityType.Image(
+    asset: SanityType.Ref(
+        _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
+        _type: "reference"
+    ),
+    crop: nil,
+    hotspot: nil
+)
+
+let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
+
 final class SanityImageUrlTests: XCTestCase {
     func testImageWithInvalidRef() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
+        let image = SanityType.Image(
             asset: SanityType.Ref(
+                // _ref here is invalid
                 _ref: "Tb9Ew8CXIwaY6R1kjMvI0uRR000x3000-jpg",
                 _type: "reference"
             ),
             crop: nil,
-            hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
-                width: 0.3,
-                x: 0.3,
-                y: 0.3
-            )
+            hotspot: nil
         )
 
-        assert(imageWithNoCropSpecified.validImage == false)
-
-        let url = client.imageURL(imageWithNoCropSpecified).URL()
+        assert(image.validImage == false)
+        let url = client.imageURL(image).URL()
         assert(url == nil)
     }
 
     func testImageNoCropWithHotspotSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
-                width: 0.3,
-                x: 0.3,
-                y: 0.3
-            )
-        )
-        let url = client.imageURL(imageWithNoCropSpecified).URL()
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg")
+        let image = hotspotImage
+        let url = client.imageURL(image).URL()
+        let expect = "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg"
+        assert(url!.absoluteString == expect)
     }
 
     func testImageNoCropWithHotspotWithWidthSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
-                width: 0.3,
-                x: 0.3,
-                y: 0.3
-            )
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = hotspotImage
+        let url = client.imageURL(image)
             .width(100)
             .URL()
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?w=100")
+        assert(url!.query == "w=100")
     }
 
     func testImageNoCropWithHotspotWithHeightSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
-                width: 0.3,
-                x: 0.3,
-                y: 0.3
-            )
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = hotspotImage
+        let url = client.imageURL(image)
             .height(100)
             .URL()
-
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?h=100")
+        assert(url!.query == "h=100")
     }
 
     func testImageNoCropWithHotspotWithTallImageSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
-                width: 0.3,
-                x: 0.3,
-                y: 0.3
-            )
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = hotspotImage
+        let url = client.imageURL(image)
             .width(30)
             .height(100)
             .URL()
-
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=150,0,900,3000&w=30&h=100")
+        assert(url!.query == "rect=150,0,900,3000&w=30&h=100")
     }
 
     func testImageNoCropWithHotspotWithWideImageSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
-                width: 0.3,
-                x: 0.3,
-                y: 0.3
-            )
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = hotspotImage
+        let url = client.imageURL(image)
             .width(100)
             .height(30)
             .URL()
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=0,600,2000,600&w=100&h=30")
+        assert(url!.query == "rect=0,600,2000,600&w=100&h=30")
     }
 
     func testImageNoCropNoHotspotSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: nil
-        )
-        let url = client.imageURL(imageWithNoCropSpecified).URL()
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg")
+        let image = noHotspotNoCropImage
+        let url = client.imageURL(image).URL()
+        let expect = "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg"
+        assert(url!.absoluteString == expect)
     }
 
     func testImageWithWidthNoCropNoHotspotSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: nil
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = noHotspotNoCropImage
+        let url = client.imageURL(image)
             .width(100)
             .URL()
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?w=100")
+        assert(url!.query == "w=100")
     }
 
     func testImageWithHeightNoCropNoHotspotSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: nil
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = noHotspotNoCropImage
+        let url = client.imageURL(image)
             .height(100)
             .URL()
 
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?h=100")
+        assert(url!.query == "h=100")
     }
 
     func testSquareImage() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
+        let image = SanityType.Image(
             asset: SanityType.Ref(
                 _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-1000x1200-jpg",
                 _type: "reference"
@@ -212,54 +121,36 @@ final class SanityImageUrlTests: XCTestCase {
             crop: nil,
             hotspot: nil
         )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let url = client.imageURL(image)
             .width(500)
             .height(600)
             .URL()
 
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-1000x1200.jpg?w=500&h=600")
+        let exp = "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-1000x1200.jpg?w=500&h=600"
+        assert(url!.absoluteString == exp)
     }
 
     func testImageWithTallImageNoCropNoHotspotSpecified() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: nil
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = noHotspotNoCropImage
+        let url = client.imageURL(image)
             .width(30)
             .height(100)
             .URL()
 
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=550,0,900,3000&w=30&h=100")
+        assert(url!.query == "rect=550,0,900,3000&w=30&h=100")
     }
 
     func testImageWithWideImageNoCropNoHotspotSpecified() throws {
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
-            asset: SanityType.Ref(
-                _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
-                _type: "reference"
-            ),
-            crop: nil,
-            hotspot: nil
-        )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let image = noHotspotNoCropImage
+        let url = client.imageURL(image)
             .width(100)
             .height(30)
             .URL()
-        assert(url!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=0,1200,2000,600&w=100&h=30")
+        assert(url!.query == "rect=0,1200,2000,600&w=100&h=30")
     }
 
     func testImageWithCropWithHotspotSpecified() throws {
-        let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
-        let imageWithNoCropSpecified = SanityType.Image(
+        let image = SanityType.Image(
             asset: SanityType.Ref(
                 _ref: "image-Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000-jpg",
                 _type: "reference"
@@ -277,10 +168,10 @@ final class SanityImageUrlTests: XCTestCase {
                 y: 0.3
             )
         )
-        let url = client.imageURL(imageWithNoCropSpecified)
+        let url = client.imageURL(image)
             .width(30)
             .height(100)
 
-        assert(url.URL()!.absoluteString == "https://cdn.sanity.io/images/zp7mbokg/production/Tb9Ew8CXIwaY6R1kjMvI0uRR-2000x3000.jpg?rect=240,300,720,2400&w=30&h=100")
+        assert(url.URL()!.query == "rect=240,300,720,2400&w=30&h=100")
     }
 }
