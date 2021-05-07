@@ -51,3 +51,52 @@ final class SanityClientTests: XCTestCase {
         XCTAssertEqual(client.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/")
     }
 }
+
+final class SanityClientQueryTests: XCTestCase {
+    func testQueryURL() {
+        let config = SanityClient.Config(projectId: "rwmuledy", dataset: "prod", version: .v1, token: nil, useCdn: nil)
+
+        let fetch = SanityClient.Query<String>.apiURL.fetch(query: "*", params: [:], config: config)
+        XCTAssertEqual(fetch.urlRequest.url!.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*")
+
+        let listen = SanityClient.Query<String>.apiURL.listen(query: "*", params: [:], config: config)
+
+        
+        XCTAssertEqual(
+            listen.urlRequest.url!.absoluteString,
+            "https://rwmuledy.api.sanity.io/v1/data/listen/prod?query=*&includeResult=true"
+        )
+    }
+
+    func testQueryURLRequestAuthToken() {
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "prod",
+            version: .v1,
+            token: "ABC",
+            useCdn: nil
+        )
+
+        let fetch = SanityClient.Query<String>.apiURL.fetch(
+            query: "*",
+            params: [:],
+            config: config
+        )
+
+        XCTAssertEqual(
+            fetch.urlRequest.value(forHTTPHeaderField: "Authorization"),
+            "Bearer: ABC"
+        )
+
+        let listen = SanityClient.Query<String>.apiURL.listen(
+            query: "*",
+            params: [:],
+            config: config
+        )
+
+        XCTAssertEqual(
+            listen.urlRequest.value(forHTTPHeaderField: "Authorization"),
+            "Bearer: ABC"
+        )
+    }
+}
