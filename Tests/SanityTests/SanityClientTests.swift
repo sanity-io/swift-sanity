@@ -61,7 +61,6 @@ final class SanityClientQueryTests: XCTestCase {
 
         let listen = SanityClient.Query<String>.apiURL.listen(query: "*", params: [:], config: config)
 
-        
         XCTAssertEqual(
             listen.urlRequest.url!.absoluteString,
             "https://rwmuledy.api.sanity.io/v1/data/listen/prod?query=*&includeResult=true"
@@ -97,6 +96,27 @@ final class SanityClientQueryTests: XCTestCase {
         XCTAssertEqual(
             listen.urlRequest.value(forHTTPHeaderField: "Authorization"),
             "Bearer: ABC"
+        )
+    }
+
+    func testOverrideDefaultParams() {
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "prod",
+            version: .v1,
+            token: nil,
+            useCdn: nil
+        )
+
+        let listen = SanityClient.Query<String>.apiURL.listen(
+            query: "*",
+            params: ["includeResult": false],
+            config: config
+        )
+
+        XCTAssertEqual(
+            listen.urlRequest.url!.absoluteString,
+            "https://rwmuledy.api.sanity.io/v1/data/listen/prod?query=*&includeResult=false"
         )
     }
 }
