@@ -106,17 +106,17 @@ final class SanityClientQueryTests: XCTestCase {
             params: ["includeResult": false],
             config: config
         )
-        
+
         let url = listen.urlRequest.url!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        
+
         let query = components.queryItems?.first(where: { $0.name == "query" })?.value
         XCTAssertEqual(query, "*")
-        
+
         let includeResult = components.queryItems?.first(where: { $0.name == "includeResult" })?.value
         XCTAssertEqual(includeResult, "false")
     }
-    
+
     func testAddParams() {
         let config = SanityClient.Config(
             projectId: "rwmuledy",
@@ -134,10 +134,10 @@ final class SanityClientQueryTests: XCTestCase {
 
         let url = fetch.urlRequest.url!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        
+
         let kustom = components.queryItems?.first(where: { $0.name == "kustom" })?.value
         XCTAssertEqual(kustom, "29")
-        
+
         let another = components.queryItems?.first(where: { $0.name == "another" })?.value
         XCTAssertEqual(another, "one")
     }
