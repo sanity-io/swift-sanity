@@ -19,7 +19,7 @@ public class SanityClient {
         let projectId: String
         let dataset: String
         let version: APIVersion
-        let apiKey: String?
+        let token: String?
         let apiHost: APIHost = .productionCDN
 
         enum APIHost {
@@ -85,7 +85,7 @@ public class SanityClient {
                         .init(name: "query", value: query),
                     ] + self.parseParams(params)
 
-                    if let apiKey = config.apiKey {
+                    if let apiKey = config.token {
                         queryItems.append(.init(name: "apiKey", value: apiKey))
                     }
                     let paths: [String] = ["data", "query", config.dataset]
@@ -97,7 +97,7 @@ public class SanityClient {
                         .init(name: "includeResult", value: "true"),
                     ] + parseParams(params)
 
-                    if let apiKey = config.apiKey {
+                    if let apiKey = config.token {
                         queryItems.append(.init(name: "apiKey", value: apiKey))
                     }
 
@@ -125,7 +125,7 @@ public class SanityClient {
     }
 
     public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, apiKey: String? = nil) {
-        self.config = Config(projectId: projectId, dataset: dataset, version: version, apiKey: apiKey)
+        self.config = Config(projectId: projectId, dataset: dataset, version: version, token: apiKey)
     }
 
     public func query<T: Decodable>(_: T.Type, query: String, params: [String: Any] = [:]) -> Query<T> {
