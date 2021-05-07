@@ -77,7 +77,7 @@ final class SanityClientQueryTests: XCTestCase {
 
         XCTAssertEqual(
             fetch.urlRequest.value(forHTTPHeaderField: "Authorization"),
-            "Bearer: ABC"
+            "Bearer ABC"
         )
 
         let listen = SanityClient.Query<String>.apiURL.listen(
@@ -88,7 +88,7 @@ final class SanityClientQueryTests: XCTestCase {
 
         XCTAssertEqual(
             listen.urlRequest.value(forHTTPHeaderField: "Authorization"),
-            "Bearer: ABC"
+            "Bearer ABC"
         )
     }
 

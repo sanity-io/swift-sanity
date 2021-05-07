@@ -92,7 +92,7 @@ public class SanityClient {
             var request = URLRequest(url: url)
 
             if let token = self.token {
-                request.setValue("Bearer: \(token)", forHTTPHeaderField: "Authorization")
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
 
             return request
