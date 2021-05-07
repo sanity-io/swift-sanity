@@ -19,8 +19,19 @@ public class SanityClient {
         let projectId: String
         let dataset: String
         let version: APIVersion
-        let apiKey: String?
-        let apiHost: APIHost = .productionCDN
+        let token: String?
+        let useCdn: Bool?
+        var apiHost: APIHost {
+            // TODO: There are a few more conditions that will exclude CDN as a valid host, such as:
+            // config with custom apihost domain
+            // Any request that isnt GET or HEAD
+            // Query Listening?
+            if useCdn == true, token == nil {
+                return .productionCDN
+            }
+
+            return .production
+        }
 
         enum APIHost {
             case production
@@ -55,7 +66,7 @@ public class SanityClient {
                 case .v1:
                     return "v1"
                 case .v20210325:
-                    return "v2020-03-25"
+                    return "v2021-03-25"
                 case .latest:
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd"
@@ -65,6 +76,26 @@ public class SanityClient {
                     return string
                 }
             }
+        }
+
+        func getURL(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URL {
+            var components = URLComponents()
+            components.scheme = "https"
+            components.host = self.apiHost.hostForProjectId(self.projectId)
+            components.path = "/" + self.version.string + path
+            components.queryItems = queryItems
+            return components.url!
+        }
+
+        internal func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URLRequest {
+            let url = getURL(path: path, queryItems: queryItems)
+            var request = URLRequest(url: url)
+
+            if let token = self.token {
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
+
+            return request
         }
     }
 
@@ -78,40 +109,38 @@ public class SanityClient {
             case fetch(query: String, params: [String: Any], config: Config)
             case listen(query: String, params: [String: Any], config: Config)
 
-            var url: URL {
+            var urlRequest: URLRequest {
                 switch self {
                 case let .fetch(query, params, config):
-                    var queryItems: [URLQueryItem] = [
-                        .init(name: "query", value: query),
-                    ] + self.parseParams(params)
+                    let items = queryItems(defaults: [
+                        "query": query,
+                    ], params: params)
 
-                    if let apiKey = config.apiKey {
-                        queryItems.append(.init(name: "apiKey", value: apiKey))
-                    }
-                    let paths: [String] = ["data", "query", config.dataset]
-                    return getURLForPaths(paths, queryItems: queryItems, config: config)
+                    let path = "/data/query/\(config.dataset)"
+                    return config.getURLRequest(path: path, queryItems: items)
 
                 case let .listen(query, params, config):
-                    var queryItems: [URLQueryItem] = [
-                        .init(name: "query", value: query),
-                        .init(name: "includeResult", value: "true"),
-                    ] + parseParams(params)
+                    let items = queryItems(defaults: [
+                        "query": query,
+                        "includeResult": "true",
+                    ], params: params)
 
-                    if let apiKey = config.apiKey {
-                        queryItems.append(.init(name: "apiKey", value: apiKey))
-                    }
+                    let path = "/data/listen/\(config.dataset)"
+                    return config.getURLRequest(path: path, queryItems: items)
+                }
+            }
 
-                    let paths: [String] = ["data", "listen", config.dataset]
-                    return getURLForPaths(paths, queryItems: queryItems, config: config)
+            private func queryItems(defaults: [String: Any], params: [String: Any]) -> [URLQueryItem] {
+                let mergedParams: [String: Any] = defaults.merging(params) { _, new in new }
+
+                return mergedParams.map { key, value in
+                    URLQueryItem(name: key, value: String(describing: value))
                 }
             }
 
             private func getURLForPaths(_ paths: [String], queryItems: [URLQueryItem], config: Config) -> URL {
-                var components = URLComponents()
-                components.scheme = "https"
-                components.host = config.apiHost.hostForProjectId(config.projectId)
-
-                components.path = "/" + config.version.string + "/" + paths.joined(separator: "/")
+                let url = config.getURL(path: "/" + paths.joined(separator: "/"))
+                var components = URLComponents(string: url.absoluteString)!
                 components.queryItems = queryItems
                 return components.url!
             }
@@ -124,8 +153,12 @@ public class SanityClient {
         }
     }
 
-    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, apiKey: String? = nil) {
-        self.config = Config(projectId: projectId, dataset: dataset, version: version, apiKey: apiKey)
+    public init(config: Config) {
+        self.config = config
+    }
+
+    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, token: String? = nil, useCdn: Bool? = nil) {
+        self.config = Config(projectId: projectId, dataset: dataset, version: version, token: token, useCdn: useCdn)
     }
 
     public func query<T: Decodable>(_: T.Type, query: String, params: [String: Any] = [:]) -> Query<T> {
@@ -134,5 +167,9 @@ public class SanityClient {
 
     public func query(query: String, params: [String: Any] = [:]) -> Query<JSON> {
         Query<JSON>(config: config, query: query, params: params, urlSession: urlSession)
+    }
+
+    public func getURL(path: String) -> URL {
+        config.getURL(path: path)
     }
 }

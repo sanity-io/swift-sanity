@@ -174,4 +174,6 @@ final class SanityImageUrlTests: XCTestCase {
 
         assert(url.URL()!.query == "rect=240,300,720,2400&w=30&h=100")
     }
+
+    // TODO: Test overriding cdn hostname ala https://github.com/sanity-io/image-url/blob/f0a7b1430b64b2bb9ad9542a7b14e26bd905e3f5/test/fromClient.test.ts
 }

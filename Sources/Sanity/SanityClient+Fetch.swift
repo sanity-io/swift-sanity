@@ -24,51 +24,51 @@ public extension SanityClient.Query {
     }
 
     struct ErrorResponse: Decodable {
-        struct Error: LocalizedError, Decodable {
-            enum keys: String, CodingKey { case description, end, start, ms, query, type }
-            let end: Int
-            let start: Int
-            let description: String
-            let query: String
-            let type: String
+        enum keys: String, CodingKey { case message, statusCode, error }
 
-            init(from decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: keys.self)
+        let message: String
+        let statusCode: Int
+        let errorMessage: String
 
-                self.description = try container.decode(String.self, forKey: .description)
-                self.end = try container.decode(Int.self, forKey: .end)
-                self.start = try container.decode(Int.self, forKey: .start)
-                self.query = try container.decode(String.self, forKey: .query)
-                self.type = try container.decode(String.self, forKey: .type)
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: keys.self)
+            self.message = try container.decode(String.self, forKey: .message)
+            self.statusCode = try container.decode(Int.self, forKey: .statusCode)
+            self.errorMessage = try container.decode(String.self, forKey: .error)
+        }
+
+        struct Error: LocalizedError {
+            var errorResponse: ErrorResponse
+            init(response: ErrorResponse) {
+                self.errorResponse = response
             }
 
-            public var errorDescription: String? {
-                NSLocalizedString(self.description, comment: self.type)
+            var recoverySuggestion: String? {
+                self.errorResponse.message
             }
 
-            var queryErrorDescription: String {
-                let query = self.query
-                let start = String.Index(utf16Offset: self.start, in: query)
-                let end = String.Index(utf16Offset: self.end, in: query)
-                return query[..<start] + " (here ->) " + query[end...]
+            var failureReason: String? {
+                self.errorResponse.errorMessage
             }
         }
 
-        let error: ErrorResponse.Error
+        var error: Error {
+            Error(response: self)
+        }
     }
 
     func fetch() -> AnyPublisher<DataResponse<T>, Error> {
-        let url = apiURL.fetch(query: query, params: params, config: config).url
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
 
-        return urlSession.dataTaskPublisher(for: url).tryMap { data, response -> JSONDecoder.Input in
+        return urlSession.dataTaskPublisher(for: urlRequest).tryMap { data, response -> JSONDecoder.Input in
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
             }
 
             switch httpResponse.statusCode {
-            case 200:
+            case 200 ..< 300:
                 return data
-            case 400:
+            case 400 ..< 500:
                 let errorEnvelope = try JSONDecoder().decode(ErrorResponse.self, from: data)
                 throw errorEnvelope.error
             default:
@@ -80,24 +80,24 @@ public extension SanityClient.Query {
     }
 
     func fetch(completion: @escaping ResultCallback<DataResponse<T>>) {
-        let url = apiURL.fetch(query: query, params: params, config: config).url
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
 
-        let task = urlSession.dataTask(with: url) { data, response, error in
+        let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
             guard let httpResponse = response as? HTTPURLResponse, let data = data else {
                 return completion(.failure(URLError(.badServerResponse)))
             }
 
-            switch httpResponse.statusCode {
-            case 200:
-                do {
-                    let decoder = JSONDecoder()
-                    let data = try decoder.decode(DataResponse<T>.self, from: data)
+            let decoder = JSONDecoder()
 
+            switch httpResponse.statusCode {
+            case 200 ..< 300:
+                do {
+                    let data = try decoder.decode(DataResponse<T>.self, from: data)
                     completion(.success(data))
-                } catch {
-                    completion(.failure(error))
+                } catch let e {
+                    completion(.failure(e))
                 }
-            case 400:
+            case 400 ..< 500:
                 if let errorEnvelope = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
                     return completion(.failure(errorEnvelope.error))
                 }
