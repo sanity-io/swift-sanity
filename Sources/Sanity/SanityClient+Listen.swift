@@ -110,7 +110,7 @@ public extension SanityClient.Query {
 
     func listen(reconnect: Bool = true) -> ListenPublisher<T> {
         let urlRequest = apiURL.listen(query: query, params: params, config: config).urlRequest
-        
+
         let eventSource = EventSource(url: urlRequest.url!, headers: urlRequest.allHTTPHeaderFields ?? [:])
 
         eventSource.onMessage { id, event, data in

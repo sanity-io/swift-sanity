@@ -22,10 +22,10 @@ public class SanityClient {
         let token: String?
         let useCdn: Bool?
         var apiHost: APIHost {
-            if useCdn == true && token == nil {
+            if useCdn == true, token == nil {
                 return .productionCDN
             }
-            
+
             return .production
         }
 
@@ -86,11 +86,11 @@ public class SanityClient {
         internal func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URLRequest {
             let url = getURL(path: path, queryItems: queryItems)
             var request = URLRequest(url: url)
-            
+
             if let token = self.token {
                 request.setValue("Bearer: \(token)", forHTTPHeaderField: "Authorization")
             }
-            
+
             return request
         }
     }
@@ -112,18 +112,17 @@ public class SanityClient {
                         .init(name: "query", value: query),
                     ] + self.parseParams(params)
 
-                    let paths: [String] = ["/", "data", "query", config.dataset]
-                    return config.getURLRequest(path: paths.joined(separator: "/"), queryItems: queryItems)
-                    
+                    let path = "/data/query/\(config.dataset)"
+                    return config.getURLRequest(path: path, queryItems: queryItems)
+
                 case let .listen(query, params, config):
                     let queryItems: [URLQueryItem] = [
                         .init(name: "query", value: query),
                         .init(name: "includeResult", value: "true"),
                     ] + parseParams(params)
 
-                    let paths: [String] = ["/", "data", "listen", config.dataset]
-                    return config.getURLRequest(path: paths.joined(separator: "/"), queryItems: queryItems)
-                    
+                    let path = "/data/listen/\(config.dataset)"
+                    return config.getURLRequest(path: path, queryItems: queryItems)
                 }
             }
 
