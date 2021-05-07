@@ -55,7 +55,7 @@ public class SanityClient {
                 case .v1:
                     return "v1"
                 case .v20210325:
-                    return "v2020-03-25"
+                    return "v2021-03-25"
                 case .latest:
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd"
