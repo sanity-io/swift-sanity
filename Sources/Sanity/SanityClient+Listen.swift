@@ -109,8 +109,9 @@ public extension SanityClient.Query {
     }
 
     func listen(reconnect: Bool = true) -> ListenPublisher<T> {
-        let url = apiURL.listen(query: query, params: params, config: config).url
-        let eventSource = EventSource(url: url)
+        let urlRequest = apiURL.listen(query: query, params: params, config: config).urlRequest
+        
+        let eventSource = EventSource(url: urlRequest.url!, headers: urlRequest.allHTTPHeaderFields ?? [:])
 
         eventSource.onMessage { id, event, data in
             print("message: \(String(describing: id)), event: \(String(describing: event)), data: \(String(describing: data))")

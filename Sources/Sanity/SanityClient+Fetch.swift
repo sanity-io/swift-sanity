@@ -58,9 +58,9 @@ public extension SanityClient.Query {
     }
 
     func fetch() -> AnyPublisher<DataResponse<T>, Error> {
-        let url = apiURL.fetch(query: query, params: params, config: config).url
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
 
-        return urlSession.dataTaskPublisher(for: url).tryMap { data, response -> JSONDecoder.Input in
+        return urlSession.dataTaskPublisher(for: urlRequest).tryMap { data, response -> JSONDecoder.Input in
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
             }
@@ -80,9 +80,9 @@ public extension SanityClient.Query {
     }
 
     func fetch(completion: @escaping ResultCallback<DataResponse<T>>) {
-        let url = apiURL.fetch(query: query, params: params, config: config).url
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
 
-        let task = urlSession.dataTask(with: url) { data, response, error in
+        let task = urlSession.dataTask(with: urlRequest) { data, response, error in
             guard let httpResponse = response as? HTTPURLResponse, let data = data else {
                 return completion(.failure(URLError(.badServerResponse)))
             }

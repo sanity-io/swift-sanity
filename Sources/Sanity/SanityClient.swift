@@ -22,12 +22,10 @@ public class SanityClient {
         let token: String?
         let useCdn: Bool?
         var apiHost: APIHost {
-            get {
-                if (useCdn == true) {
-                    return .productionCDN
-                }
-                return .production
+            if useCdn == true {
+                return .productionCDN
             }
+            return .production
         }
 
         enum APIHost {
@@ -74,13 +72,25 @@ public class SanityClient {
                 }
             }
         }
-        
-        func getURL(path: String = "/") -> URL {
+
+        func getURL(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URL {
             var components = URLComponents()
             components.scheme = "https"
             components.host = self.apiHost.hostForProjectId(self.projectId)
             components.path = "/" + self.version.string + path
+            components.queryItems = queryItems
             return components.url!
+        }
+
+        internal func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URLRequest {
+            let url = getURL(path: path, queryItems: queryItems)
+            var request = URLRequest(url: url)
+            
+            if let token = self.token {
+                request.setValue("Bearer: \(token)", forHTTPHeaderField: "Authorization")
+            }
+            
+            return request
         }
     }
 
@@ -94,31 +104,25 @@ public class SanityClient {
             case fetch(query: String, params: [String: Any], config: Config)
             case listen(query: String, params: [String: Any], config: Config)
 
-            var url: URL {
+            var urlRequest: URLRequest {
                 switch self {
                 case let .fetch(query, params, config):
-                    var queryItems: [URLQueryItem] = [
+                    let queryItems: [URLQueryItem] = [
                         .init(name: "query", value: query),
                     ] + self.parseParams(params)
 
-                    if let apiKey = config.token {
-                        queryItems.append(.init(name: "apiKey", value: apiKey))
-                    }
-                    let paths: [String] = ["data", "query", config.dataset]
-                    return getURLForPaths(paths, queryItems: queryItems, config: config)
-
+                    let paths: [String] = ["/", "data", "query", config.dataset]
+                    return config.getURLRequest(path: paths.joined(separator: "/"), queryItems: queryItems)
+                    
                 case let .listen(query, params, config):
-                    var queryItems: [URLQueryItem] = [
+                    let queryItems: [URLQueryItem] = [
                         .init(name: "query", value: query),
                         .init(name: "includeResult", value: "true"),
                     ] + parseParams(params)
 
-                    if let apiKey = config.token {
-                        queryItems.append(.init(name: "apiKey", value: apiKey))
-                    }
-
-                    let paths: [String] = ["data", "listen", config.dataset]
-                    return getURLForPaths(paths, queryItems: queryItems, config: config)
+                    let paths: [String] = ["/", "data", "listen", config.dataset]
+                    return config.getURLRequest(path: paths.joined(separator: "/"), queryItems: queryItems)
+                    
                 }
             }
 
@@ -136,7 +140,7 @@ public class SanityClient {
             }
         }
     }
-    
+
     public init(config: Config) {
         self.config = config
     }
@@ -152,8 +156,8 @@ public class SanityClient {
     public func query(query: String, params: [String: Any] = [:]) -> Query<JSON> {
         Query<JSON>(config: config, query: query, params: params, urlSession: urlSession)
     }
-    
+
     public func getURL(path: String) -> URL {
-        return config.getURL(path: path)
+        config.getURL(path: path)
     }
 }
