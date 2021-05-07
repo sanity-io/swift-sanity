@@ -22,9 +22,10 @@ public class SanityClient {
         let token: String?
         let useCdn: Bool?
         var apiHost: APIHost {
-            if useCdn == true {
+            if useCdn == true && token == nil {
                 return .productionCDN
             }
+            
             return .production
         }
 
