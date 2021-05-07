@@ -112,21 +112,21 @@ public class SanityClient {
             var urlRequest: URLRequest {
                 switch self {
                 case let .fetch(query, params, config):
-                    let queryItems = queryItems(defaults: [
+                    let items = queryItems(defaults: [
                         "query": query,
                     ], params: params)
 
                     let path = "/data/query/\(config.dataset)"
-                    return config.getURLRequest(path: path, queryItems: queryItems)
+                    return config.getURLRequest(path: path, queryItems: items)
 
                 case let .listen(query, params, config):
-                    let queryItems = queryItems(defaults: [
+                    let items = queryItems(defaults: [
                         "query": query,
                         "includeResult": "true",
                     ], params: params)
 
                     let path = "/data/listen/\(config.dataset)"
-                    return config.getURLRequest(path: path, queryItems: queryItems)
+                    return config.getURLRequest(path: path, queryItems: items)
                 }
             }
 
