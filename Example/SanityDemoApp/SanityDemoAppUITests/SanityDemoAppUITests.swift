@@ -2,6 +2,7 @@
 //
 // Copyright (c) 2021 Sanity.io
 
+import Sanity
 import XCTest
 
 class SanityDemoAppUITests: XCTestCase {

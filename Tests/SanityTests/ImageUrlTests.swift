@@ -12,8 +12,8 @@ let hotspotImage = SanityType.Image(
     ),
     crop: nil,
     hotspot: SanityType.Image.Hotspot(
-        height: 0.3,
         width: 0.3,
+        height: 0.3,
         x: 0.3,
         y: 0.3
     )
@@ -158,12 +158,12 @@ final class SanityImageUrlTests: XCTestCase {
             crop: SanityType.Image.Crop(
                 bottom: 0.1,
                 left: 0.1,
-                right: 0.1,
-                top: 0.1
+                top: 0.1,
+                right: 0.1
             ),
             hotspot: SanityType.Image.Hotspot(
-                height: 0.3,
                 width: 0.3,
+                height: 0.3,
                 x: 0.3,
                 y: 0.3
             )

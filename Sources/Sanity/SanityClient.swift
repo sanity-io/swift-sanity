@@ -8,20 +8,20 @@ import GenericJSON
 public class SanityClient {
     let urlSession = URLSession(configuration: .default)
 
-    var config: Config
+    public let config: Config
 
-    enum ClientError: Error {
+    public enum ClientError: Error {
         case server(url: URL, code: Int)
         case missingData
     }
 
     public struct Config {
-        let projectId: String
-        let dataset: String
-        let version: APIVersion
-        let token: String?
-        let useCdn: Bool?
-        var apiHost: APIHost {
+        public let projectId: String
+        public let dataset: String
+        public let version: APIVersion
+        public let token: String?
+        public let useCdn: Bool
+        public var apiHost: APIHost {
             // TODO: There are a few more conditions that will exclude CDN as a valid host, such as:
             // config with custom apihost domain
             // Any request that isnt GET or HEAD
@@ -33,7 +33,7 @@ public class SanityClient {
             return .production
         }
 
-        enum APIHost {
+        public enum APIHost {
             case production
             case productionCDN
             case custom(String)
@@ -97,13 +97,21 @@ public class SanityClient {
 
             return request
         }
+
+        public init(projectId: String, dataset: String, version: APIVersion, useCdn: Bool, token: String?) {
+            self.projectId = projectId
+            self.dataset = dataset
+            self.version = version
+            self.token = token
+            self.useCdn = useCdn
+        }
     }
 
     public struct Query<T: Decodable> {
-        let config: Config
-        let query: String
-        let params: [String: Any]
-        let urlSession: URLSession
+        public let config: Config
+        public let query: String
+        public let params: [String: Any]
+        public let urlSession: URLSession
 
         enum apiURL {
             case fetch(query: String, params: [String: Any], config: Config)
@@ -153,18 +161,47 @@ public class SanityClient {
         }
     }
 
+    /// Initalizes the Sanity Client
+    ///
+    /// - Parameter config: The SanityClient.Config object
+    ///
+    /// - Returns: SanityClient
     public init(config: Config) {
         self.config = config
     }
 
-    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, token: String? = nil, useCdn: Bool? = nil) {
-        self.config = Config(projectId: projectId, dataset: dataset, version: version, token: token, useCdn: useCdn)
+    /// Initalizes the Sanity Client
+    ///
+    /// - Parameter projectId: The project id to use
+    /// - Parameter dataset: The dataset to use, see https://www.sanity.io/docs/datasets
+    /// - Parameter version: The API version to use, see https://www.sanity.io/docs/api-versioning
+    /// - Parameter useCdn: Whether or not to run query against the API CDN, see https://www.sanity.io/docs/api-cdn
+    /// - Parameter token: Depending on your dataset configuration you might need an API token to query, see https://www.sanity.io/docs/keeping-your-data-safe
+    ///
+    /// - Warning: We encourage most users to use the api cdn for their front-ends unless there is a good reason not to.
+    ///
+    /// - Returns: SanityClient
+    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, useCdn: Bool, token: String? = nil) {
+        self.config = Config(projectId: projectId, dataset: dataset, version: version, useCdn: useCdn, token: token)
     }
 
+    /// Constructs a groq query of type T
+    ///
+    /// - Parameter _: Type of returned data
+    /// - Parameter query: GROQ query
+    /// - Parameter params: A dictionary of parameters
+    ///
+    /// - Returns: Query<T>
     public func query<T: Decodable>(_: T.Type, query: String, params: [String: Any] = [:]) -> Query<T> {
         Query<T>(config: config, query: query, params: params, urlSession: urlSession)
     }
 
+    /// Constructs a groq query which returns a GenericJSON type, see https://github.com/zoul/generic-json-swift
+    ///
+    /// - Parameter query: GROQ query
+    /// - Parameter params: A dictionary of parameters
+    ///
+    /// - Returns: Query<JSON>
     public func query(query: String, params: [String: Any] = [:]) -> Query<JSON> {
         Query<JSON>(config: config, query: query, params: params, urlSession: urlSession)
     }

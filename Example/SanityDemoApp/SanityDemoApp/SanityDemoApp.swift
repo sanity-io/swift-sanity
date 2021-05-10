@@ -7,7 +7,7 @@ import SwiftUI
 
 @main
 struct SanityDemoApp: App {
-    static let sanityClient = SanityClient(projectId: "hhpbrwal", dataset: "production", version: .v1)
+    static let sanityClient = SanityClient(projectId: "hhpbrwal", dataset: "production", version: .v1, useCdn: true)
     var body: some Scene {
         WindowGroup {
             ContentView()

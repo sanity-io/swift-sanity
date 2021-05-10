@@ -18,17 +18,31 @@ public extension SanityType {
         public let validImage: Bool
 
         public struct Crop {
-            let bottom: Double
-            let left: Double
-            let right: Double
-            let top: Double
+            public let bottom: Double
+            public let left: Double
+            public let top: Double
+            public let right: Double
+
+            public init(bottom: Double, left: Double, top: Double, right: Double) {
+                self.bottom = bottom
+                self.left = left
+                self.top = top
+                self.right = right
+            }
         }
 
         public struct Hotspot {
-            let height: Double
-            let width: Double
-            let x: Double
-            let y: Double
+            public let width: Double
+            public let height: Double
+            public let x: Double
+            public let y: Double
+
+            public init(width: Double, height: Double, x: Double, y: Double) {
+                self.width = width
+                self.height = height
+                self.x = x
+                self.y = y
+            }
         }
 
         public init(asset: Ref, crop: Crop?, hotspot: Hotspot?) {
@@ -61,13 +75,6 @@ public extension SanityType {
     }
 }
 
-fileprivate extension Collection {
-    /// Returns the element at the specified index if it is within bounds, otherwise nil.
-    subscript(safe index: Index) -> Element? {
-        indices.contains(index) ? self[index] : nil
-    }
-}
-
 extension SanityType.Image: Decodable {
     enum CodingKeys: String, CodingKey {
         case _type, asset, crop, hotspot
@@ -90,3 +97,10 @@ extension SanityType.Image: Decodable {
 
 extension SanityType.Image.Crop: Decodable {}
 extension SanityType.Image.Hotspot: Decodable {}
+
+fileprivate extension Collection {
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript(safe index: Index) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+}

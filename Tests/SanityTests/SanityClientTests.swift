@@ -54,7 +54,7 @@ final class SanityClientTests: XCTestCase {
 
 final class SanityClientQueryTests: XCTestCase {
     func testQueryURL() {
-        let config = SanityClient.Config(projectId: "rwmuledy", dataset: "prod", version: .v1, token: nil, useCdn: nil)
+        let config = SanityClient.Config(projectId: "rwmuledy", dataset: "prod", version: .v1, token: nil, useCdn: false)
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(query: "*", params: [:], config: config)
         XCTAssertEqual(fetch.urlRequest.url!.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*")
@@ -66,7 +66,7 @@ final class SanityClientQueryTests: XCTestCase {
             dataset: "prod",
             version: .v1,
             token: "ABC",
-            useCdn: nil
+            useCdn: false
         )
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(
@@ -98,7 +98,7 @@ final class SanityClientQueryTests: XCTestCase {
             dataset: "prod",
             version: .v1,
             token: nil,
-            useCdn: nil
+            useCdn: false
         )
 
         let listen = SanityClient.Query<String>.apiURL.listen(
@@ -123,7 +123,7 @@ final class SanityClientQueryTests: XCTestCase {
             dataset: "prod",
             version: .v1,
             token: nil,
-            useCdn: nil
+            useCdn: false
         )
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(

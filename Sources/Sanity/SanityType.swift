@@ -10,10 +10,3 @@ public struct SanityType {
         case invalidImageDimensions(dimensions: String)
     }
 }
-
-extension SanityType: Decodable {
-    public struct Ref: Decodable {
-        let _ref: String
-        let _type: String
-    }
-}
