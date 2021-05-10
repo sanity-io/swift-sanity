@@ -107,9 +107,28 @@ public extension SanityClient.Query {
             }
         }
     }
-
-    func listen(reconnect: Bool = true) -> ListenPublisher<T> {
-        let urlRequest = apiURL.listen(query: query, params: params, config: config).urlRequest
+    
+    /// Creates a Publisher that queries and listens to the Sanity Content Lake API, and emits `T` on mutation events
+    ///
+    /// # Example #
+    /// ```
+    /// client.query([String].self, query: groqQuery).listen()
+    /// .receive(on: DispatchQueue.main)
+    /// .sink { update in
+    ///   self.resultString = response.result
+    /// }
+    /// ```
+    ///
+    /// See https://www.sanity.io/docs/listening for more information about listeners
+    ///
+    /// - Parameter reconnect: Wether or not to reconnect on connection close. Note that a failed GROQ query will lead to the Content Lake API closing the connection
+    /// - Parameter includeResult: Include the resulting document in addition to the changes, defaults to true
+    /// - Parameter includePreviousRevision: Include the document as it looked before the change.
+    /// - Parameter visibility: Specifies whether events should be sent as soon as a transaction has been committed (transaction, default), or only after they are available for queries (query). Note that this is best-effort, and listeners with query may in certain cases (notably with deferred transactions) receive events that are not yet visible to queries. The visibility event field will indicate the actual visibility.
+    ///
+    /// - Returns: ListenPublisher<T>
+    func listen(reconnect: Bool = true, includeResult: Bool = true, includePreviousRevision: Bool? = nil, visibility: String? = nil) -> ListenPublisher<T> {
+        let urlRequest = apiURL.listen(query: query, params: params, config: config, includeResult: includeResult, includePreviousRevision: includePreviousRevision, visibility: visibility).urlRequest
 
         let eventSource = EventSource(url: urlRequest.url!, headers: urlRequest.allHTTPHeaderFields ?? [:])
 
