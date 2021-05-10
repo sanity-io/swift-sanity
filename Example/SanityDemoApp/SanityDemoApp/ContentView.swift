@@ -191,6 +191,12 @@ struct ContentView: View {
                         Text("ms: \(self.moviesFetcher.ms)")
                         Spacer()
                     }
+
+                    HStack {
+                        Spacer()
+                        Text("Movies").font(.title2)
+                        Spacer()
+                    }
                 }
                 ForEach(self.moviesFetcher.movies, id: \._id) { movie in
                     VStack {

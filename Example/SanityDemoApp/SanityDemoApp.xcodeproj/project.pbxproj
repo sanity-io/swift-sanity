@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D252ADDD26435BBE000B349B /* Sanity in Frameworks */ = {isa = PBXBuildFile; productRef = D252ADDC26435BBE000B349B /* Sanity */; };
+		D2557ABA26490A9400B10F26 /* SanityDemoAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2557AB926490A9400B10F26 /* SanityDemoAppUITests.swift */; };
 		D2E71DC9264356FE00DBECEC /* SanityDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E71DC8264356FE00DBECEC /* SanityDemoApp.swift */; };
 		D2E71DCB264356FE00DBECEC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E71DCA264356FE00DBECEC /* ContentView.swift */; };
 		D2E71DCD264356FF00DBECEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2E71DCC264356FF00DBECEC /* Assets.xcassets */; };
@@ -15,7 +16,20 @@
 		D2E71DDC264357C100DBECEC /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = D2E71DDB264357C100DBECEC /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D2557ABC26490A9400B10F26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2E71DBD264356FE00DBECEC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2E71DC4264356FE00DBECEC;
+			remoteInfo = SanityDemoApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		D2557AB726490A9400B10F26 /* SanityDemoAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SanityDemoAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2557AB926490A9400B10F26 /* SanityDemoAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanityDemoAppUITests.swift; sourceTree = "<group>"; };
+		D2557ABB26490A9400B10F26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2E71DC5264356FE00DBECEC /* SanityDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SanityDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2E71DC8264356FE00DBECEC /* SanityDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanityDemoApp.swift; sourceTree = "<group>"; };
 		D2E71DCA264356FE00DBECEC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -26,6 +40,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D2557AB426490A9400B10F26 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2E71DC2264356FE00DBECEC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,10 +59,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D2557AB826490A9400B10F26 /* SanityDemoAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D2557AB926490A9400B10F26 /* SanityDemoAppUITests.swift */,
+				D2557ABB26490A9400B10F26 /* Info.plist */,
+			);
+			path = SanityDemoAppUITests;
+			sourceTree = "<group>";
+		};
 		D2E71DBC264356FE00DBECEC = {
 			isa = PBXGroup;
 			children = (
 				D2E71DC7264356FE00DBECEC /* SanityDemoApp */,
+				D2557AB826490A9400B10F26 /* SanityDemoAppUITests */,
 				D2E71DC6264356FE00DBECEC /* Products */,
 				D2E71DD72643570900DBECEC /* Frameworks */,
 			);
@@ -51,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				D2E71DC5264356FE00DBECEC /* SanityDemoApp.app */,
+				D2557AB726490A9400B10F26 /* SanityDemoAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,6 +118,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D2557AB626490A9400B10F26 /* SanityDemoAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2557ABE26490A9400B10F26 /* Build configuration list for PBXNativeTarget "SanityDemoAppUITests" */;
+			buildPhases = (
+				D2557AB326490A9400B10F26 /* Sources */,
+				D2557AB426490A9400B10F26 /* Frameworks */,
+				D2557AB526490A9400B10F26 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D2557ABD26490A9400B10F26 /* PBXTargetDependency */,
+			);
+			name = SanityDemoAppUITests;
+			productName = SanityDemoAppUITests;
+			productReference = D2557AB726490A9400B10F26 /* SanityDemoAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		D2E71DC4264356FE00DBECEC /* SanityDemoApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D2E71DD4264356FF00DBECEC /* Build configuration list for PBXNativeTarget "SanityDemoApp" */;
@@ -116,6 +166,10 @@
 				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
+					D2557AB626490A9400B10F26 = {
+						CreatedOnToolsVersion = 12.5;
+						TestTargetID = D2E71DC4264356FE00DBECEC;
+					};
 					D2E71DC4264356FE00DBECEC = {
 						CreatedOnToolsVersion = 12.5;
 					};
@@ -138,11 +192,19 @@
 			projectRoot = "";
 			targets = (
 				D2E71DC4264356FE00DBECEC /* SanityDemoApp */,
+				D2557AB626490A9400B10F26 /* SanityDemoAppUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D2557AB526490A9400B10F26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2E71DC3264356FE00DBECEC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -155,6 +217,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D2557AB326490A9400B10F26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2557ABA26490A9400B10F26 /* SanityDemoAppUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2E71DC1264356FE00DBECEC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -166,7 +236,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		D2557ABD26490A9400B10F26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2E71DC4264356FE00DBECEC /* SanityDemoApp */;
+			targetProxy = D2557ABC26490A9400B10F26 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		D2557ABF26490A9400B10F26 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SanityDemoAppUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sgulseth.SanityDemoAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SanityDemoApp;
+			};
+			name = Debug;
+		};
+		D2557AC026490A9400B10F26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SanityDemoAppUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sgulseth.SanityDemoAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SanityDemoApp;
+			};
+			name = Release;
+		};
 		D2E71DD2264356FF00DBECEC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -328,6 +442,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D2557ABE26490A9400B10F26 /* Build configuration list for PBXNativeTarget "SanityDemoAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2557ABF26490A9400B10F26 /* Debug */,
+				D2557AC026490A9400B10F26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D2E71DC0264356FE00DBECEC /* Build configuration list for PBXProject "SanityDemoApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
