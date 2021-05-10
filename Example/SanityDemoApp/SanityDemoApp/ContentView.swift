@@ -138,6 +138,23 @@ extension View {
     }
 }
 
+struct ErrorView: View {
+    let error: Error
+
+    var body: some View {
+        if let error = self.error as? SanityClient.Query<[Movie]>.ErrorResponse, let queryError = error.queryError {
+            Text("query error: \(queryError.queryError)").foregroundColor(.red)
+
+            HStack {
+                Text("query: \(queryError.query)")
+                Spacer()
+            }
+        } else {
+            Text("error: \(error.localizedDescription)").foregroundColor(.red)
+        }
+    }
+}
+
 struct ContentView: View {
     @ObservedObject var moviesFetcher = MoviesFetcher()
 
@@ -163,28 +180,18 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 16)
-//                if let error = self.moviesFetcher.error {
-//                    if let error = self.moviesFetcher.error as? SanityClient.Query.ErrorResponse.Error {
-//                        Text("query error: \(error.localizedDescription)").foregroundColor(.red)
-//
-//                        HStack {
-//                            Text("query: \(error.queryErrorDescription)")
-//                            Spacer()
-//                        }
-//                    } else {
-//                        Text("error: \(error.localizedDescription)").foregroundColor(.red)
-//                    }
-//                }
-//                else {
-                HStack {
-                    Text("query: \(self.moviesFetcher.queryString.trimmingCharacters(in: .whitespacesAndNewlines))")
-                    Spacer()
+                if let error = self.moviesFetcher.error {
+                    ErrorView(error: error)
+                } else {
+                    HStack {
+                        Text("query: \(self.moviesFetcher.queryString.trimmingCharacters(in: .whitespacesAndNewlines))")
+                        Spacer()
+                    }
+                    HStack {
+                        Text("ms: \(self.moviesFetcher.ms)")
+                        Spacer()
+                    }
                 }
-                HStack {
-                    Text("ms: \(self.moviesFetcher.ms)")
-                    Spacer()
-                }
-//                }
                 ForEach(self.moviesFetcher.movies, id: \._id) { movie in
                     VStack {
                         ZStack {

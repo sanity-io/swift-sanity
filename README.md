@@ -33,20 +33,17 @@ var groq = """
 
 let query = client.query([Post].self, query: groq)
 
-let group = DispatchGroup()
-group.enter()
-
 query.fetch { completion in
-    switch(completion) {
-    case .success(let response):
-        dump(response.result)
-    case .failure(let error):
-        dump(error)
+    /// Receive and update values on the main queue
+    DispatchQueue.main.async {
+        switch(completion) {
+        case .success(let response):
+            dump(response.result)
+        case .failure(let error):
+            dump(error)
+        }
     }
-    group.leave()
 }
-
-group.wait()
 ```
 
 outputs
@@ -71,7 +68,7 @@ outputs
 
 ## Untyped results
 
-Omitting the type will return generic json
+Omitting the type will return generic json type from (zoul/generic-json-swift)[https://github.com/zoul/generic-json-swift]
 
 ```swift
 // ...
