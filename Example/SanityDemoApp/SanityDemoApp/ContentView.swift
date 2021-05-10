@@ -155,6 +155,64 @@ struct ErrorView: View {
     }
 }
 
+struct MoviesList: View {
+    let movies: [Movie]
+
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text("Movies").font(.title2)
+                Spacer()
+            }
+            ForEach(self.movies, id: \._id) { movie in
+                VStack {
+                    ZStack {
+                        WebImage(url: SanityDemoApp.sanityClient.imageURL(movie.poster)
+                            .width(400)
+                            .height(700)
+                            .URL())
+                            .resizable()
+                            .scaledToFit()
+                        VStack {
+                            HStack {
+                                Spacer()
+                                VStack {
+                                    Text("\(movie.popularity)")
+                                }
+                                .background(Color.red)
+                                .rotationEffect(.init(degrees: 45))
+                                .frame(width: 80, height: 80)
+                            }
+                            Spacer()
+                            HStack {
+                                Text(movie.title)
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }
+                            .padding(.top, 8)
+                            .padding(.bottom)
+                            .padding(.horizontal)
+                            .background(Color.black.opacity(0.6))
+                        }
+                    }
+                    .cornerRadius(20)
+                    VStack(alignment: .leading) {
+                        ForEach(movie.overview) { block in
+                            HStack {
+                                ForEach(block.children) { child in
+                                    Text("\(child.text)")
+                                        .blockContentChild(child, markDefs: block.markDefs)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct ContentView: View {
     @ObservedObject var moviesFetcher = MoviesFetcher()
 
@@ -191,57 +249,8 @@ struct ContentView: View {
                         Text("ms: \(self.moviesFetcher.ms)")
                         Spacer()
                     }
-
-                    HStack {
-                        Spacer()
-                        Text("Movies").font(.title2)
-                        Spacer()
-                    }
                 }
-                ForEach(self.moviesFetcher.movies, id: \._id) { movie in
-                    VStack {
-                        ZStack {
-                            WebImage(url: SanityDemoApp.sanityClient.imageURL(movie.poster)
-                                .width(400)
-                                .height(700)
-                                .URL())
-                                .resizable()
-                                .scaledToFit()
-                            VStack {
-                                HStack {
-                                    Spacer()
-                                    VStack {
-                                        Text("\(movie.popularity)")
-                                    }
-                                    .background(Color.red)
-                                    .rotationEffect(.init(degrees: 45))
-                                    .frame(width: 80, height: 80)
-                                }
-                                Spacer()
-                                HStack {
-                                    Text(movie.title)
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                }
-                                .padding(.top, 8)
-                                .padding(.bottom)
-                                .padding(.horizontal)
-                                .background(Color.black.opacity(0.6))
-                            }
-                        }
-                        .cornerRadius(20)
-                        VStack(alignment: .leading) {
-                            ForEach(movie.overview) { block in
-                                HStack {
-                                    ForEach(block.children) { child in
-                                        Text("\(child.text)")
-                                            .blockContentChild(child, markDefs: block.markDefs)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                MoviesList(movies: self.moviesFetcher.movies)
                 Spacer()
             }
             .padding()
