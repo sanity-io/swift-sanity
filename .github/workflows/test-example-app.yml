@@ -1,0 +1,21 @@
+name: Example App Build & Test
+
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        working-directory: Example/SanityDemoApp
+        run: |
+          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoApp"  -sdk iphonesimulator  -destination 'platform=iOS Simulator,name=iPhone 8,OS=14.5' build-for-testing
+      - name: Test
+        working-directory: Example/SanityDemoApp
+        run: |
+          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoAppUITests" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=14.5' test-without-building

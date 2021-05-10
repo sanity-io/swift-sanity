@@ -11,13 +11,13 @@ public extension SanityClient.Query {
     /// DataResponse is returned on a successful query
     struct DataResponse<T: Decodable>: Decodable {
         enum keys: String, CodingKey { case ms, query, result }
-        
+
         /// Time taken on the server to process and execute the query
         public let ms: Int
-        
+
         /// The submitted query
         public let query: String
-        
+
         /// The query result
         public let result: T
 
@@ -36,19 +36,19 @@ public extension SanityClient.Query {
     struct ErrorResponse: Decodable, LocalizedError {
         public struct QueryError: Decodable {
             enum keys: String, CodingKey { case description, end, start, ms, query, type }
-            
+
             /// Query syntax index on where the error starts
             public let start: Int
-            
+
             /// Query syntax index on where the error ends
             public let end: Int
-            
+
             /// Contains a description on what the server couldn't parse
             public let description: String
-            
+
             /// The submitted and failed query
             public let query: String
-            
+
             /// Type of error
             public let type: String
 
@@ -77,10 +77,10 @@ public extension SanityClient.Query {
 
         /// Error message
         public let message: String
-        
+
         /// Status code is a http status code returned by the error object
         public let statusCode: Int
-        
+
         /// Error is the type of error
         public let error: String
 
