@@ -2,20 +2,25 @@ name: Example App Build & Test
 
 on:
   push:
-    branches: [$default-branch]
+    branches: [main]
   pull_request:
-    branches: [$default-branch]
+    branches: [main]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
+
+      - name: Force xcode 12.2
+        run: sudo xcode-select -switch /Applications/Xcode_12.2.app
+
       - name: Build
         working-directory: Example/SanityDemoApp
         run: |
-          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoApp"  -sdk iphonesimulator  -destination 'platform=iOS Simulator,name=iPhone 8,OS=14.5' build-for-testing
+          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoApp"  -sdk iphonesimulator  -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.2' build-for-testing
+
       - name: Test
         working-directory: Example/SanityDemoApp
         run: |
-          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoAppUITests" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 8,OS=14.5' test-without-building
+          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoAppUITests" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.2' test-without-building
