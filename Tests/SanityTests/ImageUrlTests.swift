@@ -28,7 +28,7 @@ let noHotspotNoCropImage = SanityType.Image(
     hotspot: nil
 )
 
-let client = SanityClient(projectId: "zp7mbokg", dataset: "production")
+let client = SanityClient(projectId: "zp7mbokg", dataset: "production", useCdn: true)
 
 final class SanityImageUrlTests: XCTestCase {
     func testImageWithInvalidRef() throws {
