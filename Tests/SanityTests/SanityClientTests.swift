@@ -28,7 +28,7 @@ final class SanityClientTests: XCTestCase {
             useCdn: false
         )
 
-        XCTAssertEqual(client.getURL(path: "/bar/baz").absoluteString, "https://rwmuledy.api.sanity.io/v1/bar/baz")
+        XCTAssertEqual(client.config.getURL(path: "/bar/baz").absoluteString, "https://rwmuledy.api.sanity.io/v1/bar/baz")
     }
 
     func testUseCdn() {
@@ -39,17 +39,17 @@ final class SanityClientTests: XCTestCase {
             useCdn: true
         )
 
-        XCTAssertEqual(client.getURL(path: "/").absoluteString, "https://rwmuledy.apicdn.sanity.io/v1/")
+        XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.apicdn.sanity.io/v1/")
     }
 
     func testNoCdnWithToken() {
         let client = SanityClient(projectId: "rwmuledy", dataset: "prod", version: .v1, useCdn: true, token: "yes")
-        XCTAssertEqual(client.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/", "Cannot use apicdn when token is set")
+        XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/", "Cannot use apicdn when token is set")
     }
 
     func testConfigInit() {
         let config = SanityClient.Config(projectId: "rwmuledy", dataset: "master", version: .v1, useCdn: false, token: nil)
         let client = SanityClient(config: config)
-        XCTAssertEqual(client.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/")
+        XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/")
     }
 }

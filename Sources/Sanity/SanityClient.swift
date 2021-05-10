@@ -205,8 +205,4 @@ public class SanityClient {
     public func query(query: String, params: [String: Any] = [:]) -> Query<JSON> {
         Query<JSON>(config: config, query: query, params: params, urlSession: urlSession)
     }
-
-    public func getURL(path: String) -> URL {
-        config.getURL(path: path)
-    }
 }
