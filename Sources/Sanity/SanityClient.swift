@@ -115,7 +115,7 @@ public class SanityClient {
 
         enum apiURL {
             case fetch(query: String, params: [String: Any], config: Config)
-            case listen(query: String, params: [String: Any], config: Config)
+            case listen(query: String, params: [String: Any], config: Config, includeResult: Bool?, includePreviousRevision: Bool?, visibility: String?)
 
             var urlRequest: URLRequest {
                 switch self {
@@ -127,11 +127,21 @@ public class SanityClient {
                     let path = "/data/query/\(config.dataset)"
                     return config.getURLRequest(path: path, queryItems: items)
 
-                case let .listen(query, params, config):
-                    let items = queryItems(defaults: [
-                        "query": query,
-                        "includeResult": "true",
-                    ], params: params)
+                case let .listen(query, params, config, includeResult, includePreviousRevision, visibility):
+                    var defaults = [ "query": query ]
+                    if let includeResult = includeResult {
+                        defaults["includeResult"] = "\(includeResult)"
+                    }
+
+                    if let includePreviousRevision = includePreviousRevision {
+                        defaults["includePreviousRevision"] = "\(includePreviousRevision)"
+                    }
+
+                    if let visibility = visibility {
+                        defaults["visibility"] = "\(visibility)"
+                    }
+
+                    let items = queryItems(defaults: defaults, params: params)
 
                     let path = "/data/listen/\(config.dataset)"
                     return config.getURLRequest(path: path, queryItems: items)
@@ -139,7 +149,10 @@ public class SanityClient {
             }
 
             private func queryItems(defaults: [String: Any], params: [String: Any]) -> [URLQueryItem] {
-                let mergedParams: [String: Any] = defaults.merging(params) { _, new in new }
+                let prefixedParams = params.reduce(into: [:]) { result, x in
+                    result["$\(x.key)"] = x.value
+                }
+                let mergedParams: [String: Any] = defaults.merging(prefixedParams) { _, new in new }
 
                 return mergedParams.map { key, value in
                     URLQueryItem(name: key, value: String(describing: value))

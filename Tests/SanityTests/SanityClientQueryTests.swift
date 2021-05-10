@@ -39,7 +39,10 @@ final class SanityClientQueryTests: XCTestCase {
         let listen = SanityClient.Query<String>.apiURL.listen(
             query: "*",
             params: [:],
-            config: config
+            config: config,
+            includeResult: nil,
+            includePreviousRevision: nil,
+            visibility: nil
         )
 
         XCTAssertEqual(
@@ -59,8 +62,11 @@ final class SanityClientQueryTests: XCTestCase {
 
         let listen = SanityClient.Query<String>.apiURL.listen(
             query: "*",
-            params: ["includeResult": false],
-            config: config
+            params: [:],
+            config: config,
+            includeResult: false,
+            includePreviousRevision: nil,
+            visibility: nil
         )
 
         let url = listen.urlRequest.url!
@@ -91,10 +97,10 @@ final class SanityClientQueryTests: XCTestCase {
         let url = fetch.urlRequest.url!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
 
-        let kustom = components.queryItems?.first(where: { $0.name == "kustom" })?.value
+        let kustom = components.queryItems?.first(where: { $0.name == "$kustom" })?.value
         XCTAssertEqual(kustom, "29")
 
-        let another = components.queryItems?.first(where: { $0.name == "another" })?.value
+        let another = components.queryItems?.first(where: { $0.name == "$another" })?.value
         XCTAssertEqual(another, "one")
     }
 }
