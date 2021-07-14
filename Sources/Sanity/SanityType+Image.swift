@@ -75,7 +75,7 @@ public extension SanityType {
     }
 }
 
-extension SanityType.Image: Decodable {
+extension SanityType.Image: Codable {
     enum CodingKeys: String, CodingKey {
         case _type, asset, crop, hotspot
     }
@@ -93,10 +93,19 @@ extension SanityType.Image: Decodable {
 
         self.init(asset: asset, crop: crop, hotspot: hotspot)
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode("image", forKey: ._type)
+
+        try container.encode(asset, forKey: .asset)
+        try container.encode(crop, forKey: .crop)
+        try container.encode(hotspot, forKey: .hotspot)
+    }
 }
 
-extension SanityType.Image.Crop: Decodable {}
-extension SanityType.Image.Hotspot: Decodable {}
+extension SanityType.Image.Crop: Codable {}
+extension SanityType.Image.Hotspot: Codable {}
 
 fileprivate extension Collection {
     /// Returns the element at the specified index if it is within bounds, otherwise nil.

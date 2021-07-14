@@ -14,7 +14,7 @@ public extension SanityType {
     }
 }
 
-extension SanityType.Slug: Decodable {
+extension SanityType.Slug: Codable {
     enum CodingKeys: String, CodingKey {
         case _type, current
     }
@@ -27,6 +27,12 @@ extension SanityType.Slug: Decodable {
         }
 
         self.current = try container.decode(String.self, forKey: .current)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode("slug", forKey: ._type)
+        try container.encode(current, forKey: .current)
     }
 }
 

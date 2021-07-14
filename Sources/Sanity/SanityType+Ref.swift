@@ -14,7 +14,7 @@ public extension SanityType {
     }
 }
 
-extension SanityType.Ref: Decodable {}
+extension SanityType.Ref: Codable {}
 extension SanityType.Ref: Hashable {}
 extension SanityType.Ref: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
