@@ -107,6 +107,10 @@ extension SanityType.Image: Codable {
 extension SanityType.Image.Crop: Codable {}
 extension SanityType.Image.Hotspot: Codable {}
 
+extension SanityType.Image.Crop: Hashable, Equatable {}
+extension SanityType.Image.Hotspot: Hashable, Equatable {}
+extension SanityType.Image: Hashable, Equatable {}
+
 fileprivate extension Collection {
     /// Returns the element at the specified index if it is within bounds, otherwise nil.
     subscript(safe index: Index) -> Element? {
