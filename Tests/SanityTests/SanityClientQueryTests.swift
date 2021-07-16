@@ -1,9 +1,6 @@
+// MIT License
 //
-//  File.swift
-//  
-//
-//  Created by Sindre Gulseth on 10/05/2021.
-//
+// Copyright (c) 2021 Sanity.io
 
 @testable import Sanity
 import XCTest

@@ -3,7 +3,6 @@
 // Copyright (c) 2021 Sanity.io
 
 import Foundation
-import GenericJSON
 
 public class SanityClient {
     let urlSession = URLSession(configuration: .default)
@@ -107,7 +106,7 @@ public class SanityClient {
         }
     }
 
-    public struct Query<T: Decodable> {
+    public struct Query<T> {
         public let config: Config
         public let query: String
         public let params: [String: Any]
@@ -128,7 +127,7 @@ public class SanityClient {
                     return config.getURLRequest(path: path, queryItems: items)
 
                 case let .listen(query, params, config, includeResult, includePreviousRevision, visibility):
-                    var defaults = [ "query": query ]
+                    var defaults = ["query": query]
                     if let includeResult = includeResult {
                         defaults["includeResult"] = "\(includeResult)"
                     }
@@ -209,13 +208,13 @@ public class SanityClient {
         Query<T>(config: config, query: query, params: params, urlSession: urlSession)
     }
 
-    /// Constructs a groq query which returns a GenericJSON type, see https://github.com/zoul/generic-json-swift
+    /// Constructs a groq query which returns a Data response
     ///
     /// - Parameter query: GROQ query
     /// - Parameter params: A dictionary of parameters
     ///
-    /// - Returns: Query<JSON>
-    public func query(query: String, params: [String: Any] = [:]) -> Query<JSON> {
-        Query<JSON>(config: config, query: query, params: params, urlSession: urlSession)
+    /// - Returns: Query<Void>
+    public func query(query: String, params: [String: Any] = [:]) -> Query<Void> {
+        Query<Void>(config: config, query: query, params: params, urlSession: urlSession)
     }
 }
