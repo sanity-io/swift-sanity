@@ -5,7 +5,7 @@
 import Combine
 import Foundation
 
-public extension SanityClient.Query {
+public extension SanityClient.Query where T: Decodable {
     typealias ResultCallback<Value> = (Result<Value, Error>) -> Void
 
     /// DataResponse is returned on a successful query
@@ -190,6 +190,43 @@ public extension SanityClient.Query {
                     return completion(.failure(errorResponse))
                 }
                 fallthrough
+            default:
+                return completion(.failure(URLError(.badServerResponse)))
+            }
+        }
+
+        task.resume()
+    }
+}
+
+public extension SanityClient.Query {
+    typealias ResultDataCallback = (Result<Data, Error>) -> Void
+    /// Creates a fetch that retrieves the queries the Sanity Content Lake API, and calls a handler upon completion.
+    /// All status codes less than 300 will return a success value.
+    /// See https://www.sanity.io/docs/http-query for information about the response object
+    ///
+    /// # Example #
+    /// ```
+    /// client.query([String].self, query: groqQuery).fetch { completion in
+    ///     switch(completion) {
+    ///     case .success(let data):
+    ///         dump(data)
+    ///     case .failure(let error):
+    ///         dump(error)
+    ///     }
+    /// }
+    /// ```
+    func fetch(completion: @escaping ResultDataCallback) {
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
+
+        let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
+            guard let httpResponse = response as? HTTPURLResponse, let data = data else {
+                return completion(.failure(URLError(.badServerResponse)))
+            }
+
+            switch httpResponse.statusCode {
+            case 200 ..< 300:
+                completion(.success(data))
             default:
                 return completion(.failure(URLError(.badServerResponse)))
             }

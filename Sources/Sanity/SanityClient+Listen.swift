@@ -6,7 +6,7 @@ import Combine
 import EventSource
 import Foundation
 
-public extension SanityClient.Query {
+public extension SanityClient.Query where T: Decodable {
     struct ListenResponse<T: Decodable>: Decodable {
         enum keys: String, CodingKey { case eventId, transition, result }
         public let eventId: String
@@ -107,7 +107,7 @@ public extension SanityClient.Query {
             }
         }
     }
-    
+
     /// Creates a Publisher that queries and listens to the Sanity Content Lake API, and emits `T` on mutation events
     ///
     /// # Example #

@@ -68,7 +68,8 @@ outputs
 
 ## Untyped results
 
-Omitting the type will return generic json type from (zoul/generic-json-swift)[https://github.com/zoul/generic-json-swift]
+Omitting the type will return a success type with Data. All status codes less than 300 will return a success value.
+See https://www.sanity.io/docs/http-query for information about the response object
 
 ```swift
 // ...
@@ -76,30 +77,13 @@ let query = client.query(query: groq)
 
 query.fetch { completion in
     switch(completion) {
-    case .success(let response):
-        print(response.result)
+    case .success(let data):
+        let jsonString = String(data: data, encoding: .utf8)
+        print(data)
     case .failure(let error):
         dump(error)
     }
 }
-```
-
-outputs
-```
-[
-  {
-    "slug" : "why-we-wrote-yet-another-parser-compiler",
-    "title" : "Introducing Glush: a robust, human readable, top-down parser compiler",
-    "poster" : {
-      "_type" : "image",
-      "asset" : {
-        "_type" : "reference",
-        "_ref" : "image-18b2c50584718e1356e696ab22a3499e4ba65b55-5760x3840-png"
-      },
-      "caption" : "Arrows on a green background"
-    }
-  }
-]
 ```
 
 ## Query Listening
