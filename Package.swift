@@ -16,8 +16,7 @@ let package = Package(
             targets: ["Sanity"]),
     ],
     dependencies: [
-        .package(name: "EventSource", url: "https://github.com/inaka/EventSource.git", .revision("78934b361891c7d0fa3d399d128e959f0c94d267")),
-        .package(name: "GenericJSON", url: "https://github.com/zoul/generic-json-swift", .exact("2.0.1"))
+        .package(name: "EventSource", url: "https://github.com/inaka/EventSource.git", .revision("78934b361891c7d0fa3d399d128e959f0c94d267"))
         // .package(url: /* package url */, from: "1.0.0"),
     ],
     targets: [
@@ -25,7 +24,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Sanity",
-            dependencies: ["EventSource", "GenericJSON"]),
+            dependencies: ["EventSource"]),
         .testTarget(
             name: "SanityTests",
             dependencies: ["Sanity"]),
