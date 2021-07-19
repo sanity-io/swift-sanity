@@ -22,7 +22,7 @@ public extension SanityClient.Query where T: Decodable {
         public let eventId: String
         public let transition: String
         public let result: T?
-        public let timestamp: Date?
+        public let timestamp: Date
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: keys.self)
