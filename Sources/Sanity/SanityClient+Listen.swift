@@ -18,9 +18,10 @@ struct UnableToDecodeTimestamp: Error {
 
 public extension SanityClient.Query where T: Decodable {
     struct ListenResponse<T: Decodable>: Decodable {
-        enum keys: String, CodingKey { case eventId, transition, result, timestamp }
+        enum keys: String, CodingKey { case eventId, documentId, transition, result, timestamp }
         public let eventId: String
         public let transition: String
+        public let documentId: String
         public let result: T?
         public let timestamp: Date
 
@@ -28,6 +29,7 @@ public extension SanityClient.Query where T: Decodable {
             let container = try decoder.container(keyedBy: keys.self)
 
             self.eventId = try container.decode(String.self, forKey: .eventId)
+            self.documentId = try container.decode(String.self, forKey: .documentId)
             self.transition = try container.decode(String.self, forKey: .transition)
             self.result = try container.decode(T.self, forKey: .result)
             let dateStr = try container.decode(String.self, forKey: .timestamp)
