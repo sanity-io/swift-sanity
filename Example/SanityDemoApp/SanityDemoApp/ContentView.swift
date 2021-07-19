@@ -69,6 +69,19 @@ class MoviesFetcher: ObservableObject {
                 self.ms = response.ms
                 self.queryString = response.query
             })
+
+//        fetchMoviesCancellable = SanityDemoApp.sanityClient.query(query: kQuery).fetch()
+//            .receive(on: DispatchQueue.main)
+//            .sink(receiveCompletion: { completion in
+//                switch completion {
+//                case .finished:
+//                    break
+//                case let .failure(error):
+//                    self.error = error
+//                }
+//            }, receiveValue: { response in
+//                print(response)
+//            })
     }
 
     func listenMovies() {
@@ -76,11 +89,18 @@ class MoviesFetcher: ObservableObject {
         listenMoviesCancellable = Movie.queryListen.listen()
             .receive(on: DispatchQueue.main)
             .sink { update in
-                let movie = update.result
+                guard let movie = update.result else {
+                    return
+                }
                 if let index = self.movies.firstIndex(where: { $0._id == movie._id }) {
                     self.movies[index] = self.movies[index].merge(with: movie)
                 }
             }
+
+//        listenMoviesCancellable = SanityDemoApp.sanityClient.query(query: kQuery).listen().receive(on: DispatchQueue.main).sink { update in
+//            print("Got data update")
+//            print(update)
+//        }
     }
 
     func cancel() {
