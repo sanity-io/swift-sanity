@@ -200,6 +200,61 @@ public extension SanityClient.Query where T: Decodable {
 }
 
 public extension SanityClient.Query {
+    struct HTTPUserError: Error {
+        public let data: Data
+        public let statusCode: Int
+
+        public var errorDescription: String? {
+            "HTTP Error \(self.statusCode)"
+        }
+    }
+
+    struct HTTPServerError: Error {
+        public let data: Data
+        public let statusCode: Int
+
+        public var errorDescription: String? {
+            "HTTP Error \(self.statusCode)"
+        }
+    }
+
+    /// Creates a Publisher that queries the Sanity Content Lake API, and emits  Data value type  on a successful query and Error on failed queries
+    ///
+    /// # Example #
+    /// ```
+    /// client.query(query: groqQuery).fetch()
+    /// .receive(on: DispatchQueue.main)
+    /// .sink(receiveCompletion: { completion in
+    ///     switch completion {
+    ///         case .finished:
+    ///         break
+    ///     case let .failure(error):
+    ///         self.error = error
+    ///     }
+    /// }, receiveValue: { data in
+    ///     self.data = data
+    /// })
+    /// ```
+    func fetch() -> AnyPublisher<Data, Error> {
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
+
+        return urlSession.dataTaskPublisher(for: urlRequest).tryMap { data, response in
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw URLError(.badServerResponse)
+            }
+
+            switch httpResponse.statusCode {
+            case 200 ..< 300:
+                return data
+            case 400 ..< 500:
+                throw HTTPUserError(data: data, statusCode: httpResponse.statusCode)
+            default:
+                throw HTTPServerError(data: data, statusCode: httpResponse.statusCode)
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
     typealias ResultDataCallback = (Result<Data, Error>) -> Void
     /// Creates a fetch that retrieves the queries the Sanity Content Lake API, and calls a handler upon completion.
     /// All status codes less than 300 will return a success value.
