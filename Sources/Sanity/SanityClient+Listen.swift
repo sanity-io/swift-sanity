@@ -11,7 +11,7 @@ public extension SanityClient.Query where T: Decodable {
         enum keys: String, CodingKey { case eventId, transition, result }
         public let eventId: String
         public let transition: String
-        public let result: T
+        public let result: T?
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: keys.self)
