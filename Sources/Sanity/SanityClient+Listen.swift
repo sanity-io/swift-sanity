@@ -6,12 +6,23 @@ import Combine
 import EventSource
 import Foundation
 
+fileprivate let dateFormatter: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter
+}()
+
+struct UnableToDecodeTimestamp: Error {
+    let string: String
+}
+
 public extension SanityClient.Query where T: Decodable {
     struct ListenResponse<T: Decodable>: Decodable {
-        enum keys: String, CodingKey { case eventId, transition, result }
+        enum keys: String, CodingKey { case eventId, transition, result, timestamp }
         public let eventId: String
         public let transition: String
         public let result: T?
+        public let timestamp: Date?
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: keys.self)
@@ -19,6 +30,11 @@ public extension SanityClient.Query where T: Decodable {
             self.eventId = try container.decode(String.self, forKey: .eventId)
             self.transition = try container.decode(String.self, forKey: .transition)
             self.result = try container.decode(T.self, forKey: .result)
+            let dateStr = try container.decode(String.self, forKey: .timestamp)
+            guard let date = dateFormatter.date(from: dateStr) else {
+                throw UnableToDecodeTimestamp(string: dateStr)
+            }
+            self.timestamp = date
         }
     }
 
