@@ -90,6 +90,7 @@ public class SanityClient {
             let url = getURL(path: path, queryItems: queryItems)
             var request = URLRequest(url: url)
 
+            request.addValue("sanity-swift/1.0", forHTTPHeaderField: "User-Agent")
             if let token = self.token {
                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
