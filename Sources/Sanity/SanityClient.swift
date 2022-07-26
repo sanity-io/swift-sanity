@@ -4,6 +4,9 @@
 
 import Foundation
 
+// Based on https://github.com/sanity-io/client/blob/31ecabdc523b4543083ee03300c18557528d6961/src/data/dataMethods.js#L37
+let kQuerySizeLimitPost = 11264
+
 public class SanityClient {
     let urlSession = URLSession(configuration: .default)
 
@@ -86,9 +89,19 @@ public class SanityClient {
             return components.url!
         }
 
-        internal func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URLRequest {
+        internal func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil, canUsePost: Bool = false) -> URLRequest {
             let url = getURL(path: path, queryItems: queryItems)
-            var request = URLRequest(url: url)
+            var request: URLRequest
+            if let queryItems = queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
+                request = URLRequest(url: getURL(path: path))
+                request.httpMethod = "POST"
+
+                let body = Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) })
+                request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+                request.setValue("application/json", forHTTPHeaderField: "content-type")
+            } else {
+                request = URLRequest(url: url)
+            }
 
             request.addValue("sanity-swift/1.0", forHTTPHeaderField: "User-Agent")
             if let token = self.token {
@@ -125,7 +138,7 @@ public class SanityClient {
                     ], params: params)
 
                     let path = "/data/query/\(config.dataset)"
-                    return config.getURLRequest(path: path, queryItems: items)
+                    return config.getURLRequest(path: path, queryItems: items, canUsePost: true)
 
                 case let .listen(query, params, config, includeResult, includePreviousRevision, visibility):
                     var defaults = ["query": query]
