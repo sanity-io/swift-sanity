@@ -42,6 +42,38 @@ final class SanityClientTests: XCTestCase {
         XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.apicdn.sanity.io/v1/")
     }
 
+    func testUseGET() {
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "b",
+            version: .v1,
+            useCdn: true,
+            token: nil
+        )
+
+        let query = String(repeating: "query!", count: 1)
+
+        let request = SanityClient.Query<Any>.apiURL.fetch(query: query, params: [:], config: config).urlRequest
+
+        XCTAssertEqual(request.httpMethod, "GET")
+    }
+
+    func testUsePOST() {
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "b",
+            version: .v1,
+            useCdn: true,
+            token: nil
+        )
+
+        let query = String(repeating: "query!", count: 4000)
+
+        let request = SanityClient.Query<Any>.apiURL.fetch(query: query, params: [:], config: config).urlRequest
+
+        XCTAssertEqual(request.httpMethod, "POST")
+    }
+
     func testNoCdnWithToken() {
         let client = SanityClient(projectId: "rwmuledy", dataset: "prod", version: .v1, useCdn: true, token: "yes")
         XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/", "Cannot use apicdn when token is set")
