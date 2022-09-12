@@ -6,22 +6,22 @@ import Foundation
 
 public extension SanityType {
     struct Image {
-        public let id: String
-        public let width: Int
-        public let height: Int
-        public let format: String
+        public var id: String
+        public var width: Int
+        public var height: Int
+        public var format: String
 
-        public let asset: Ref
-        public let crop: Crop?
-        public let hotspot: Hotspot?
+        public var asset: Ref
+        public var crop: Crop?
+        public var hotspot: Hotspot?
 
-        public let validImage: Bool
+        public var validImage: Bool
 
         public struct Crop {
-            public let bottom: Double
-            public let left: Double
-            public let top: Double
-            public let right: Double
+            public var bottom: Double
+            public var left: Double
+            public var top: Double
+            public var right: Double
 
             public init(bottom: Double, left: Double, top: Double, right: Double) {
                 self.bottom = bottom
@@ -32,10 +32,10 @@ public extension SanityType {
         }
 
         public struct Hotspot {
-            public let width: Double
-            public let height: Double
-            public let x: Double
-            public let y: Double
+            public var width: Double
+            public var height: Double
+            public var x: Double
+            public var y: Double
 
             public init(width: Double, height: Double, x: Double, y: Double) {
                 self.width = width
