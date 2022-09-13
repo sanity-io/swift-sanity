@@ -72,6 +72,18 @@ public extension SanityType {
             self.height = Int(height) ?? 0
             self.validImage = true
         }
+
+        public init(id: String, width: Int, height: Int, format: String, validImage: Bool, crop: Crop?, hotspot: Hotspot?) {
+            self.id = id
+            self.width = width
+            self.height = height
+            self.format = format
+            self.validImage = validImage
+
+            self.asset = Ref(_ref: "\(id)-\(width)x\(height).\(format)", _type: "image")
+            self.crop = crop
+            self.hotspot = hotspot
+        }
     }
 }
 
