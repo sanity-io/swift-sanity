@@ -80,7 +80,7 @@ public extension SanityType {
             self.format = format
             self.validImage = validImage
 
-            self.asset = Ref(_ref: "image-\(id)-\(width)x\(height)-\(format)", _type: "image")
+            self.asset = Ref(_ref: "image-\(id)-\(width)x\(height)-\(format)", _type: "reference")
             self.crop = crop
             self.hotspot = hotspot
         }
