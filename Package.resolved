@@ -3,11 +3,11 @@
     "pins": [
       {
         "package": "EventSource",
-        "repositoryURL": "https://github.com/inaka/EventSource.git",
+        "repositoryURL": "https://github.com/sgulseth/swift-EventSource.git",
         "state": {
           "branch": null,
           "revision": "78934b361891c7d0fa3d399d128e959f0c94d267",
-          "version": null
+          "version": "3.0.2"
         }
       }
     ]
