@@ -8,19 +8,19 @@ on:
 
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v2
 
-      - name: Force xcode 12.2
-        run: sudo xcode-select -switch /Applications/Xcode_12.2.app
+      - name: Force xcode 15.0.1
+        run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app
 
       - name: Build
         working-directory: Example/SanityDemoApp
         run: |
-          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoApp"  -sdk iphonesimulator  -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.2' build-for-testing
+          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoApp"  -sdk iphonesimulator  -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.0.1' build-for-testing
 
       - name: Test
         working-directory: Example/SanityDemoApp
         run: |
-          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoAppUITests" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.2' test-without-building
+          xcodebuild -project SanityDemoApp.xcodeproj -scheme "SanityDemoAppUITests" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1' test-without-building
