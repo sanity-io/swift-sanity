@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -186,6 +186,7 @@
 			mainGroup = D2E71DBC264356FE00DBECEC;
 			packageReferences = (
 				D2E71DDA264357C100DBECEC /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				D2F23BF72B231F32007306D9 /* XCLocalSwiftPackageReference "../.." */,
 			);
 			productRefGroup = D2E71DC6264356FE00DBECEC /* Products */;
 			projectDirPath = "";
@@ -470,6 +471,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D2F23BF72B231F32007306D9 /* XCLocalSwiftPackageReference "../.." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../..;
+		};
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		D2E71DDA264357C100DBECEC /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {

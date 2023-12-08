@@ -15,13 +15,28 @@ let kQuery = """
     overview,
     title,
     popularity,
-    poster
+    poster,
+    "screenings": *[_type == "screening" && references(^._id)] {
+        _id,
+        title,
+        beginAt,
+        endAt,
+        ticket
+    }
 }
 """
 
 struct Movie: Decodable {
     static let queryAll = SanityDemoApp.sanityClient.query([Movie].self, query: kQuery)
     static let queryListen = SanityDemoApp.sanityClient.query(Movie.self, query: kQuery)
+
+    struct Screening: Decodable {
+        let _id: String
+        let title: String
+        let beginAt: String
+        let endAt: String
+        let ticket: SanityType.File?
+    }
 
     let _id: String
     let releaseDate: String
@@ -30,6 +45,7 @@ struct Movie: Decodable {
     let title: String
     let poster: SanityType.Image
     let popularity: Double
+    let screenings: [Screening]
 
     func merge(with: Self) -> Movie {
         Movie(
@@ -39,7 +55,8 @@ struct Movie: Decodable {
             overview: with.overview,
             title: with.title,
             poster: with.poster,
-            popularity: with.popularity
+            popularity: with.popularity,
+            screenings: with.screenings
         )
     }
 }
@@ -223,6 +240,26 @@ struct MoviesList: View {
                                 ForEach(block.children) { child in
                                     Text("\(child.text)")
                                         .blockContentChild(child, markDefs: block.markDefs)
+                                }
+                            }
+                        }
+                    }
+                    if movie.screenings.count > 0 {
+                        VStack {
+                            Text("Screenings").fontWeight(.bold)
+                            ForEach(movie.screenings, id: \._id) { screening in
+                                VStack(alignment: .leading) {
+                                    Text(screening.title)
+                                    HStack {
+                                        Text("Begins at: \(screening.beginAt)")
+                                        Spacer()
+                                        Text("Ends at: \(screening.endAt)")
+                                    }
+                                    if let ticket = screening.ticket, let url = SanityDemoApp.sanityClient.fileURL(ticket) {
+                                        HStack {
+                                            Link("Download ticket", destination: url)
+                                        }
+                                    }
                                 }
                             }
                         }
