@@ -22,7 +22,8 @@ let kQuery = """
         beginAt,
         endAt,
         ticket
-    }
+    },
+    "counter": coalesce(counter, 0)
 }
 """
 
@@ -45,7 +46,8 @@ struct Movie: Decodable {
     let title: String
     let poster: SanityType.Image
     let popularity: Double
-    let screenings: [Screening]
+    let screenings: [Screening]? // This is optional since subqueries aren't supported in listeners
+    let counter: Int
 
     func merge(with: Self) -> Movie {
         Movie(
@@ -56,7 +58,8 @@ struct Movie: Decodable {
             title: with.title,
             poster: with.poster,
             popularity: with.popularity,
-            screenings: with.screenings
+            screenings: with.screenings ?? self.screenings,
+            counter: with.counter
         )
     }
 }
@@ -86,19 +89,6 @@ class MoviesFetcher: ObservableObject {
                 self.ms = response.ms
                 self.queryString = response.query
             })
-
-//        fetchMoviesCancellable = SanityDemoApp.sanityClient.query(query: kQuery).fetch()
-//            .receive(on: DispatchQueue.main)
-//            .sink(receiveCompletion: { completion in
-//                switch completion {
-//                case .finished:
-//                    break
-//                case let .failure(error):
-//                    self.error = error
-//                }
-//            }, receiveValue: { response in
-//                print(response)
-//            })
     }
 
     func listenMovies() {
@@ -113,11 +103,6 @@ class MoviesFetcher: ObservableObject {
                     self.movies[index] = self.movies[index].merge(with: movie)
                 }
             }
-
-//        listenMoviesCancellable = SanityDemoApp.sanityClient.query(query: kQuery).listen().receive(on: DispatchQueue.main).sink { update in
-//            print("Got data update")
-//            print(update)
-//        }
     }
 
     func cancel() {
@@ -146,7 +131,6 @@ extension Text {
                 view = view.foregroundColor(.blue)
             }
         }
-//        let markDefs = child.marks.compactMap { $0 == .markDef() }
         return view
     }
 }
@@ -160,15 +144,6 @@ extension View {
             }) else {
                 return
             }
-
-//            if markDef._type == "link" {
-//                view = Button(action: {
-//                    guard let url = URL(string: markDef.link), UIApplication.shared.canOpenURL(url) else {
-//                        return
-//                    }
-//                    UIApplication.shared.open(url, options: [])
-//                }, label: view)
-//            }
         }
 
         return view
@@ -186,13 +161,112 @@ struct ErrorView: View {
                 Text("query: \(queryError.query)")
                 Spacer()
             }
+        } else if let errorResponse = self.error as? SanityClient.Transaction.ErrorResponse {
+            Text("mutation error: \(errorResponse.localizedDescription)")
         } else {
             Text("error: \(error.localizedDescription)").foregroundColor(.red)
         }
     }
 }
 
-struct MoviesList: View {
+struct MovieView: View {
+    let movie: Movie
+    @State var error: Error? = nil
+    var movieImageURL: SanityImageUrl {
+        SanityDemoApp.sanityClient.imageURL(movie.poster)
+    }
+
+    var body: some View {
+        VStack {
+            ZStack {
+                WebImage(url: movieImageURL
+                    .width(400)
+                    .height(700)
+                    .URL())
+                    .resizable()
+                    .scaledToFit()
+                VStack {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text("\(movie.popularity)")
+                        }
+                        .background(Color.red)
+                        .rotationEffect(.init(degrees: 45))
+                        .frame(width: 80, height: 80)
+                    }
+                    Spacer()
+                    HStack {
+                        Text(movie.title)
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                    .padding(.top, 8)
+                    .padding(.bottom)
+                    .padding(.horizontal)
+                    .background(Color.black.opacity(0.6))
+                }
+            }
+            .cornerRadius(20)
+            VStack(alignment: .leading) {
+                ForEach(movie.overview) { block in
+                    HStack {
+                        ForEach(block.children) { child in
+                            Text("\(child.text)")
+                                .blockContentChild(child, markDefs: block.markDefs)
+                        }
+                    }
+                }
+            }
+            if let screenings = movie.screenings, screenings.count > 0 {
+                VStack {
+                    Text("Screenings").fontWeight(.bold)
+                    ForEach(screenings, id: \._id) { screening in
+                        VStack(alignment: .leading) {
+                            Text(screening.title)
+                            HStack {
+                                Text("Begins at: \(screening.beginAt)")
+                                Spacer()
+                                Text("Ends at: \(screening.endAt)")
+                            }
+                            if let ticket = screening.ticket, let url = SanityDemoApp.sanityClient.fileURL(ticket) {
+                                HStack {
+                                    Link("Download ticket", destination: url)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            HStack {
+                Text("Counter: ")
+                Spacer()
+                Text("\(movie.counter)")
+            }
+            Button("Increment movie counter") {
+                Task {
+                    let result = await SanityDemoApp.sanityClient.mutate([
+                        .patch(documentId: movie._id, patches: [
+                            Patch("counter", operation: .setIfMissing(0)),
+                            Patch("counter", operation: .inc(1)),
+                        ]),
+                    ])
+                    switch result {
+                    case let .failure(error):
+                        self.error = error
+                    case .success:
+                        break
+                    }
+                }
+            }
+            if let error = self.error {
+                ErrorView(error: error)
+            }
+        }
+    }
+}
+
+struct MoviesListView: View {
     let movies: [Movie]
 
     var body: some View {
@@ -203,68 +277,7 @@ struct MoviesList: View {
                 Spacer()
             }
             ForEach(self.movies, id: \._id) { movie in
-                VStack {
-                    ZStack {
-                        WebImage(url: SanityDemoApp.sanityClient.imageURL(movie.poster)
-                            .width(400)
-                            .height(700)
-                            .URL())
-                            .resizable()
-                            .scaledToFit()
-                        VStack {
-                            HStack {
-                                Spacer()
-                                VStack {
-                                    Text("\(movie.popularity)")
-                                }
-                                .background(Color.red)
-                                .rotationEffect(.init(degrees: 45))
-                                .frame(width: 80, height: 80)
-                            }
-                            Spacer()
-                            HStack {
-                                Text(movie.title)
-                                    .foregroundColor(.white)
-                                Spacer()
-                            }
-                            .padding(.top, 8)
-                            .padding(.bottom)
-                            .padding(.horizontal)
-                            .background(Color.black.opacity(0.6))
-                        }
-                    }
-                    .cornerRadius(20)
-                    VStack(alignment: .leading) {
-                        ForEach(movie.overview) { block in
-                            HStack {
-                                ForEach(block.children) { child in
-                                    Text("\(child.text)")
-                                        .blockContentChild(child, markDefs: block.markDefs)
-                                }
-                            }
-                        }
-                    }
-                    if movie.screenings.count > 0 {
-                        VStack {
-                            Text("Screenings").fontWeight(.bold)
-                            ForEach(movie.screenings, id: \._id) { screening in
-                                VStack(alignment: .leading) {
-                                    Text(screening.title)
-                                    HStack {
-                                        Text("Begins at: \(screening.beginAt)")
-                                        Spacer()
-                                        Text("Ends at: \(screening.endAt)")
-                                    }
-                                    if let ticket = screening.ticket, let url = SanityDemoApp.sanityClient.fileURL(ticket) {
-                                        HStack {
-                                            Link("Download ticket", destination: url)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                MovieView(movie: movie)
             }
         }
     }
@@ -307,7 +320,7 @@ struct ContentView: View {
                         Spacer()
                     }
                 }
-                MoviesList(movies: self.moviesFetcher.movies)
+                MoviesListView(movies: self.moviesFetcher.movies)
                 Spacer()
             }
             .padding()

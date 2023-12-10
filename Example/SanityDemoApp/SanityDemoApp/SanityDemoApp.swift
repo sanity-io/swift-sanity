@@ -7,7 +7,7 @@ import SwiftUI
 
 @main
 struct SanityDemoApp: App {
-    static let sanityClient = SanityClient(projectId: "hhpbrwal", dataset: "production", version: .v1, useCdn: true)
+    static let sanityClient = SanityClient(projectId: "hhpbrwal", dataset: "production", version: .v1, useCdn: true) // Set token to be able to do mutations
     var body: some Scene {
         WindowGroup {
             ContentView()

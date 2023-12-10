@@ -9,7 +9,7 @@ public extension SanityClient.Query where T: Decodable {
     typealias ResultCallback<Value> = (Result<Value, Error>) -> Void
 
     /// DataResponse is returned on a successful query
-    struct DataResponse<T: Decodable>: Decodable {
+    struct DataResponse<R: Decodable>: Decodable {
         enum keys: String, CodingKey { case ms, query, result }
 
         /// Time taken on the server to process and execute the query
@@ -19,14 +19,14 @@ public extension SanityClient.Query where T: Decodable {
         public let query: String
 
         /// The query result
-        public let result: T
+        public let result: R
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: keys.self)
 
             self.ms = try container.decode(Int.self, forKey: .ms)
             self.query = try container.decode(String.self, forKey: .query)
-            self.result = try container.decode(T.self, forKey: .result)
+            self.result = try container.decode(R.self, forKey: .result)
         }
     }
 
@@ -70,7 +70,15 @@ public extension SanityClient.Query where T: Decodable {
             }
         }
 
-        enum keys: String, CodingKey { case error, message, statusCode }
+        public struct GeneralError: Decodable {
+            /// Contains a description on what the server couldn't parse
+            public let description: String
+
+            /// Type of error
+            public let type: String
+        }
+
+        enum keys: String, CodingKey { case error, message, statusCode, descri }
 
         /// queryError is an optional field indicated that the server could not process the given query
         public let queryError: QueryError?
@@ -92,6 +100,11 @@ public extension SanityClient.Query where T: Decodable {
                 self.message = queryError.description
                 self.error = queryError.type
                 self.statusCode = 0
+            } else if let generalError = try? container.decode(GeneralError.self, forKey: .error) {
+                self.queryError = nil
+                self.message = generalError.description
+                self.statusCode = 0
+                self.error = "\(generalError.type): \(generalError.description)"
             } else {
                 self.queryError = nil
                 self.message = try container.decode(String.self, forKey: .message)

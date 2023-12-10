@@ -66,7 +66,7 @@ outputs
       - validImage: true
 ```
 
-## Untyped results
+### Untyped results
 
 Omitting the type will return a success type with Data. All status codes less than 300 will return a success value.
 See https://www.sanity.io/docs/http-query for information about the response object
@@ -91,6 +91,48 @@ query.fetch { completion in
 See the [example app](Example/SanityDemoApp/SanityDemoApp/ContentView.swift) for an example of listening to queries. This will push new results to you as content changes server side.
 
 [Sanity.io documentation on realtime updates](https://www.sanity.io/docs/realtime-updates)
+
+## Mutations
+
+*Note: To send mutation the client needs to be initalized with a token*
+
+### With completion handler:
+
+```swift
+client.mutate([
+    .patch(documentId: "some-id", patches: [
+        Patch("counter", operation: .setIfMissing(0)),
+        Patch("counter", operation: .inc(1)),
+    ]),
+]) { result in 
+    switch result {
+    case let .failure(error):
+        self.error = error
+    case .success:
+        break
+    }
+}
+
+```
+
+### async/await:
+
+Mutate also has swift async support:
+
+```swift
+let result = await SanityDemoApp.sanityClient.mutate([
+    .patch(documentId: movie._id, patches: [
+        Patch("counter", operation: .setIfMissing(0)),
+        Patch("counter", operation: .inc(1)),
+    ]),
+])
+switch result {
+case let .failure(error):
+    self.error = error
+case .success:
+    break
+}
+```
 
 ## Generate image asset URLs
 
