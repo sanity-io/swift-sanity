@@ -22,7 +22,7 @@ public extension SanityClient {
         if comp.count != 3 {
             return nil
         }
-        
+
         var components = URLComponents()
         components.scheme = "https"
         components.host = "cdn.sanity.io"

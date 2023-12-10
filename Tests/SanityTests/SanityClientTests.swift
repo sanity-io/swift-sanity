@@ -84,7 +84,7 @@ final class SanityClientTests: XCTestCase {
         let client = SanityClient(config: config)
         XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/")
     }
-    
+
     func testImageCodable() throws {
         let image = SanityType.Image(id: "123", width: 100, height: 100, format: "jpg", validImage: true, crop: nil, hotspot: nil)
         let data = try JSONEncoder().encode(image)
@@ -92,7 +92,7 @@ final class SanityClientTests: XCTestCase {
         let decodedImage = try JSONDecoder().decode(SanityType.Image.self, from: data)
         XCTAssertEqual(decodedImage, image)
     }
-    
+
     func testFileURL() throws {
         let file = SanityType.File(asset: .init(_ref: "foo-bar-png", _type: "file"))
         let client = SanityClient(projectId: "rwmuledy", dataset: "some-dataset", version: .v1, useCdn: false)

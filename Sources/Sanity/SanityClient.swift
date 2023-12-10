@@ -89,19 +89,9 @@ public class SanityClient {
             return components.url!
         }
 
-        internal func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil, canUsePost: Bool = false) -> URLRequest {
+        func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil) -> URLRequest {
             let url = getURL(path: path, queryItems: queryItems)
-            var request: URLRequest
-            if let queryItems = queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
-                request = URLRequest(url: getURL(path: path))
-                request.httpMethod = "POST"
-
-                let body = Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) })
-                request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-                request.setValue("application/json", forHTTPHeaderField: "content-type")
-            } else {
-                request = URLRequest(url: url)
-            }
+            var request = URLRequest(url: url)
 
             request.addValue("sanity-swift/1.0", forHTTPHeaderField: "User-Agent")
             if let token = self.token {
@@ -109,6 +99,25 @@ public class SanityClient {
             }
 
             return request
+        }
+
+        func getURLRequest(path: String = "/", body: Data?, queryItems: [URLQueryItem]? = nil) -> URLRequest {
+            var request = getURLRequest(path: path, queryItems: queryItems)
+            request.httpMethod = "POST"
+            request.httpBody = body
+            request.setValue("application/json", forHTTPHeaderField: "content-type")
+
+            return request
+        }
+
+        func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil, canUsePost: Bool = false) -> URLRequest {
+            let url = getURL(path: path, queryItems: queryItems)
+            if let queryItems = queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
+                let body = try? JSONSerialization.data(withJSONObject: Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) }))
+                return getURLRequest(path: path, body: body, queryItems: queryItems)
+            }
+
+            return getURLRequest(path: path, queryItems: queryItems)
         }
 
         public init(projectId: String, dataset: String, version: APIVersion, useCdn: Bool, token: String?) {
@@ -184,6 +193,20 @@ public class SanityClient {
                     URLQueryItem(name: key, value: String(describing: value))
                 }
             }
+        }
+    }
+
+    public struct Transaction {
+        public let config: Config
+        public var mutations: [Mutation] = []
+        public let urlSession: URLSession
+
+        func encode(_ options: JSONSerialization.WritingOptions = [.sortedKeys]) throws -> Data {
+            let jsonObject: [String: Any] = [
+                "mutations": mutations.compactMap { $0.encode() }.flatMap { $0 },
+            ]
+
+            return try JSONSerialization.data(withJSONObject: jsonObject, options: options)
         }
     }
 
