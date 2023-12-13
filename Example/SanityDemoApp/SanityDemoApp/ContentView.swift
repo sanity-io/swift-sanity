@@ -308,6 +308,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 16)
+
                 if let error = self.moviesFetcher.error {
                     ErrorView(error: error)
                 } else {
