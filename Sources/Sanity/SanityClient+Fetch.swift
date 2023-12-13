@@ -295,6 +295,8 @@ public extension SanityClient.Query {
             switch httpResponse.statusCode {
             case 200 ..< 300:
                 completion(.success(data))
+            case 400 ..< 500:
+                return completion(.failure(HTTPUserError(data: data, statusCode: httpResponse.statusCode)))
             default:
                 return completion(.failure(URLError(.badServerResponse)))
             }
