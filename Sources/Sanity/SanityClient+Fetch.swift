@@ -304,4 +304,42 @@ public extension SanityClient.Query {
 
         task.resume()
     }
+
+    /// Creates an async fetch that retrieves the queries the Sanity Content Lake API, and calls a handler upon completion.
+    /// All status codes less than 300 will return a success value.
+    /// See https://www.sanity.io/docs/http-query for information about the response object
+    ///
+    /// # Example #
+    /// ```
+    /// let result = await client.query([String].self, query: groqQuery)
+    ///
+    /// switch result {
+    ///     case .success(let data):
+    ///         dump(data)
+    ///     case .failure(let error):
+    ///         dump(error)
+    /// }
+    ///
+    /// ```
+    func fetch() async -> Result<Data, Error> {
+        let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
+
+        do {
+            let (data, response) = try await urlSession.data(for: urlRequest)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw URLError(.badServerResponse)
+            }
+
+            switch httpResponse.statusCode {
+            case 200 ..< 300:
+                return .success(data)
+            case 400 ..< 500:
+                throw HTTPUserError(data: data, statusCode: httpResponse.statusCode)
+            default:
+                throw URLError(.badServerResponse)
+            }
+        } catch {
+            return .failure(error)
+        }
+    }
 }
