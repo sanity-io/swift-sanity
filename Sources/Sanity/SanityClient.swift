@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Sanity.io
+// Copyright (c) 2021 Sanity.io
 
 import Foundation
 
@@ -43,11 +43,11 @@ public class SanityClient {
             var host: String {
                 switch self {
                 case .production:
-                    "api.sanity.io"
+                    return "api.sanity.io"
                 case .productionCDN:
-                    "apicdn.sanity.io"
+                    return "apicdn.sanity.io"
                 case let .custom(string):
-                    string
+                    return string
                 }
             }
 
@@ -112,7 +112,7 @@ public class SanityClient {
 
         func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil, canUsePost: Bool = false) -> URLRequest {
             let url = getURL(path: path, queryItems: queryItems)
-            if let queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
+            if let queryItems = queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
                 let body = try? JSONSerialization.data(withJSONObject: Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) }))
                 return getURLRequest(path: path, body: body, queryItems: queryItems)
             }
@@ -151,15 +151,15 @@ public class SanityClient {
 
                 case let .listen(query, params, config, includeResult, includePreviousRevision, visibility):
                     var defaults = ["query": query]
-                    if let includeResult {
+                    if let includeResult = includeResult {
                         defaults["includeResult"] = "\(includeResult)"
                     }
 
-                    if let includePreviousRevision {
+                    if let includePreviousRevision = includePreviousRevision {
                         defaults["includePreviousRevision"] = "\(includePreviousRevision)"
                     }
 
-                    if let visibility {
+                    if let visibility = visibility {
                         defaults["visibility"] = "\(visibility)"
                     }
 

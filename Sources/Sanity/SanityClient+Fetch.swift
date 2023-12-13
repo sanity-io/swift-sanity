@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Sanity.io
+// Copyright (c) 2021 Sanity.io
 
 import Combine
 import Foundation
@@ -184,7 +184,7 @@ public extension SanityClient.Query where T: Decodable {
         let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
 
         let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
-            guard let httpResponse = response as? HTTPURLResponse, let data else {
+            guard let httpResponse = response as? HTTPURLResponse, let data = data else {
                 return completion(.failure(URLError(.badServerResponse)))
             }
 
@@ -288,7 +288,7 @@ public extension SanityClient.Query {
         let urlRequest = apiURL.fetch(query: query, params: params, config: config).urlRequest
 
         let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
-            guard let httpResponse = response as? HTTPURLResponse, let data else {
+            guard let httpResponse = response as? HTTPURLResponse, let data = data else {
                 return completion(.failure(URLError(.badServerResponse)))
             }
 

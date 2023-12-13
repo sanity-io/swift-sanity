@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Sanity.io
+// Copyright (c) 2021 Sanity.io
 
 public struct SanityType {
     public enum SanityDecodingError: Error {

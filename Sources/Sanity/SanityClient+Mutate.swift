@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2023 Sanity.io
+// Copyright (c) 2021 Sanity.io
 
 import Combine
 import Foundation
@@ -180,16 +180,16 @@ public extension SanityClient.Transaction {
 
     private func getQueryItems(returnIds: Bool?, returnDocuments: Bool?, visbility: Visibility?, dryRun: Bool?) -> [URLQueryItem] {
         var queryItems: [URLQueryItem] = []
-        if let returnIds {
+        if let returnIds = returnIds {
             queryItems.append(URLQueryItem(name: "returnIds", value: "\(returnIds)"))
         }
-        if let returnDocuments {
+        if let returnDocuments = returnDocuments {
             queryItems.append(URLQueryItem(name: "returnDocuments", value: "\(returnDocuments)"))
         }
-        if let visbility {
+        if let visbility = visbility {
             queryItems.append(URLQueryItem(name: "visbility", value: "\(visbility)"))
         }
-        if let dryRun {
+        if let dryRun = dryRun {
             queryItems.append(URLQueryItem(name: "dryRun", value: "\(dryRun)"))
         }
         return queryItems
@@ -232,7 +232,7 @@ public extension SanityClient.Transaction {
 
         let urlRequest = config.getURLRequest(path: "/data/mutate/\(config.dataset)", body: body, queryItems: queryItems)
         let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
-            guard let httpResponse = response as? HTTPURLResponse, let data else {
+            guard let httpResponse = response as? HTTPURLResponse, let data = data else {
                 return completion(.failure(URLError(.badServerResponse)))
             }
 
