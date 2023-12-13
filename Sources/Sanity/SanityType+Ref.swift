@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2021 Sanity.io
+// Copyright (c) 2023 Sanity.io
 
 public extension SanityType {
     struct Ref {
