@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2021 Sanity.io
+// Copyright (c) 2023 Sanity.io
 
 import Foundation
 
@@ -43,11 +43,11 @@ public class SanityClient {
             var host: String {
                 switch self {
                 case .production:
-                    return "api.sanity.io"
+                    "api.sanity.io"
                 case .productionCDN:
-                    return "apicdn.sanity.io"
+                    "apicdn.sanity.io"
                 case let .custom(string):
-                    return string
+                    string
                 }
             }
 
@@ -112,7 +112,7 @@ public class SanityClient {
 
         func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil, canUsePost: Bool = false) -> URLRequest {
             let url = getURL(path: path, queryItems: queryItems)
-            if let queryItems = queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
+            if let queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
                 let body = try? JSONSerialization.data(withJSONObject: Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) }))
                 return getURLRequest(path: path, body: body, queryItems: queryItems)
             }
@@ -151,15 +151,15 @@ public class SanityClient {
 
                 case let .listen(query, params, config, includeResult, includePreviousRevision, visibility):
                     var defaults = ["query": query]
-                    if let includeResult = includeResult {
+                    if let includeResult {
                         defaults["includeResult"] = "\(includeResult)"
                     }
 
-                    if let includePreviousRevision = includePreviousRevision {
+                    if let includePreviousRevision {
                         defaults["includePreviousRevision"] = "\(includePreviousRevision)"
                     }
 
-                    if let visibility = visibility {
+                    if let visibility {
                         defaults["visibility"] = "\(visibility)"
                     }
 
