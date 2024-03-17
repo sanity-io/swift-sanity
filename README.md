@@ -1,6 +1,6 @@
 # Swift Sanity
 
-Code for interacting with Sanity content from Swift on iOS and macOS. This package is under development and may long term aim for feature parity with the [JavaScript client](https://www.sanity.io/docs/js-client), but for the time being is limited to groq queries, realtime listening and image asset url generation.
+Code for interacting with Sanity content from Swift on iOS and macOS. This package is under development and may long term aim for feature parity with the [JavaScript client](https://www.sanity.io/docs/js-client), but for the time being is limited to groq queries, mutations, realtime listening and image asset url generation.
 
 ## Queries
 
