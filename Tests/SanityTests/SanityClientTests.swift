@@ -56,6 +56,8 @@ final class SanityClientTests: XCTestCase {
         let request = SanityClient.Query<Any>.apiURL.fetch(query: query, params: [:], config: config).urlRequest
 
         XCTAssertEqual(request.httpMethod, "GET")
+        XCTAssertEqual(request.url?.absoluteString, "https://rwmuledy.apicdn.sanity.io/v1/data/query/b?query=query!")
+        XCTAssertNil(request.httpBody)
     }
 
     func testUsePOST() {
@@ -72,6 +74,8 @@ final class SanityClientTests: XCTestCase {
         let request = SanityClient.Query<Any>.apiURL.fetch(query: query, params: [:], config: config).urlRequest
 
         XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.url?.absoluteString, "https://rwmuledy.apicdn.sanity.io/v1/data/query/b")
+        XCTAssertEqual(request.httpBody, Data("{\"query\":\"\(query)\"}".utf8))
     }
 
     func testNoCdnWithToken() {
