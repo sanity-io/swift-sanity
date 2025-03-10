@@ -114,7 +114,7 @@ public class SanityClient {
             let url = getURL(path: path, queryItems: queryItems)
             if let queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
                 let body = try? JSONSerialization.data(withJSONObject: Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) }))
-                return getURLRequest(path: path, body: body, queryItems: queryItems)
+                return getURLRequest(path: path, body: body)
             }
 
             return getURLRequest(path: path, queryItems: queryItems)
