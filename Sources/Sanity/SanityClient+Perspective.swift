@@ -3,7 +3,7 @@
 // Copyright (c) 2023 Sanity.io
 
 extension SanityClient {
-    public struct Perspective: RawRepresentable, Hashable {
+    public struct Perspective: RawRepresentable, Hashable, Sendable {
         public let rawValue: String
         
         public init(rawValue: String) {
