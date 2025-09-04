@@ -7,10 +7,17 @@ import XCTest
 
 final class SanityClientQueryTests: XCTestCase {
     func testQueryURL() {
-        let config = SanityClient.Config(projectId: "rwmuledy", dataset: "prod", version: .v1, useCdn: false, token: nil)
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "prod",
+            version: .v1,
+            perspective: .raw,
+            useCdn: false,
+            token: nil
+        )
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(query: "*", params: [:], config: config)
-        XCTAssertEqual(fetch.urlRequest.url!.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*")
+        XCTAssertEqual(fetch.urlRequest.url?.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*&perspective=raw")
     }
 
     func testQueryURLRequestAuthToken() {
@@ -18,6 +25,7 @@ final class SanityClientQueryTests: XCTestCase {
             projectId: "rwmuledy",
             dataset: "prod",
             version: .v1,
+            perspective: nil,
             useCdn: false,
             token: "ABC"
         )
@@ -53,6 +61,7 @@ final class SanityClientQueryTests: XCTestCase {
             projectId: "rwmuledy",
             dataset: "prod",
             version: .v1,
+            perspective: nil,
             useCdn: false,
             token: nil
         )
@@ -81,6 +90,7 @@ final class SanityClientQueryTests: XCTestCase {
             projectId: "rwmuledy",
             dataset: "prod",
             version: .v1,
+            perspective: nil,
             useCdn: false,
             token: nil
         )

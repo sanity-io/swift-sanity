@@ -7,7 +7,14 @@ import XCTest
 
 final class SanityClientMutationTests: XCTestCase {
     func testTransactionEncoding() {
-        let config = SanityClient.Config(projectId: "rwmuledy", dataset: "prod", version: .v1, useCdn: false, token: nil)
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "prod",
+            version: .v1,
+            perspective: nil,
+            useCdn: false,
+            token: nil
+        )
         let transaction = SanityClient.Transaction(config: config, mutations: [
             .createIfNotExists(document: [
                 "_id": "one",
