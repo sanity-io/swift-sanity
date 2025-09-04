@@ -61,6 +61,7 @@ public class SanityClient {
         public enum APIVersion {
             case v1
             case v20210325
+            case v20250219
 
             case latest
             case custom(String)
@@ -71,6 +72,8 @@ public class SanityClient {
                     return "v1"
                 case .v20210325:
                     return "v2021-03-25"
+                case .v20250219:
+                    return "v2025-02-19"
                 case .latest:
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd"
