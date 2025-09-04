@@ -118,8 +118,20 @@ public class SanityClient {
         func getURLRequest(path: String = "/", queryItems: [URLQueryItem]? = nil, canUsePost: Bool = false) -> URLRequest {
             let url = getURL(path: path, queryItems: queryItems)
             if let queryItems, canUsePost, url.absoluteString.count > kQuerySizeLimitPost {
-                let body = try? JSONSerialization.data(withJSONObject: Dictionary(uniqueKeysWithValues: queryItems.map { ($0.name, $0.value) }))
-                return getURLRequest(path: path, body: body)
+                let bodyItemNames = ["query"]
+
+                var bodyObject: [String: String] = [:]
+                var remainigQueryItems: [URLQueryItem] = []
+                for queryItem in queryItems {
+                    if bodyItemNames.contains(queryItem.name) {
+                        bodyObject[queryItem.name] = queryItem.value
+                    } else {
+                        remainigQueryItems.append(queryItem)
+                    }
+                }
+
+                let body = try? JSONSerialization.data(withJSONObject: bodyObject)
+                return getURLRequest(path: path, body: body, queryItems: remainigQueryItems.isEmpty ? nil : remainigQueryItems)
             }
 
             return getURLRequest(path: path, queryItems: queryItems)
