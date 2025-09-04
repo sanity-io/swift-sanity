@@ -17,7 +17,7 @@ struct UnableToDecodeTimestamp: Error {
 }
 
 public extension SanityClient.Query where T: Decodable {
-    struct ListenResponse<T: Decodable>: Decodable {
+    struct ListenResponse: Decodable {
         enum keys: String, CodingKey { case eventId, documentId, transition, result, timestamp, resultRev, previousRev }
         public let eventId: String
         public let transition: String
@@ -44,8 +44,8 @@ public extension SanityClient.Query where T: Decodable {
         }
     }
 
-    struct ListenPublisher<T: Decodable>: Publisher {
-        public typealias Output = ListenResponse<T>
+    struct ListenPublisher: Publisher {
+        public typealias Output = ListenResponse
         public typealias Failure = Never
 
         fileprivate var eventSource: EventSource
@@ -54,7 +54,7 @@ public extension SanityClient.Query where T: Decodable {
         public func receive<S: Subscriber>(
             subscriber: S
         ) where S.Input == Output, S.Failure == Failure {
-            let subscription = ListenSubscription<S, T>(eventSource: eventSource, reconnect: reconnect)
+            let subscription = ListenSubscription<S>(eventSource: eventSource, reconnect: reconnect)
             subscription.target = subscriber
 
             subscriber.receive(subscription: subscription)
@@ -63,7 +63,7 @@ public extension SanityClient.Query where T: Decodable {
         }
     }
 
-    class ListenSubscription<Target: Subscriber, T: Decodable>: Subscription where Target.Input == ListenResponse<T> {
+    class ListenSubscription<Target: Subscriber>: Subscription where Target.Input == ListenResponse {
         fileprivate var eventSource: EventSource
         fileprivate var reconnect: Bool
 
@@ -97,7 +97,7 @@ public extension SanityClient.Query where T: Decodable {
                 return
             }
 
-            guard let decoded = try? JSONDecoder().decode(ListenResponse<T>.self, from: data) else {
+            guard let decoded = try? JSONDecoder().decode(ListenResponse.self, from: data) else {
                 return
             }
 
@@ -124,14 +124,14 @@ public extension SanityClient.Query where T: Decodable {
     /// - Parameter visibility: Specifies whether events should be sent as soon as a transaction has been committed (transaction, default), or only after they are available for queries (query). Note that this is best-effort, and listeners with query may in certain cases (notably with deferred transactions) receive events that are not yet visible to queries. The visibility event field will indicate the actual visibility.
     ///
     /// - Returns: ListenPublisher<T>
-    func listen(reconnect: Bool = true, includeResult: Bool = true, includePreviousRevision: Bool? = nil, visibility: String? = nil) -> ListenPublisher<T> {
+    func listen(reconnect: Bool = true, includeResult: Bool = true, includePreviousRevision: Bool? = nil, visibility: String? = nil) -> ListenPublisher {
         let urlRequest = apiURL.listen(query: query, params: params, config: config, includeResult: includeResult, includePreviousRevision: includePreviousRevision, visibility: visibility).urlRequest
 
         let eventSource = EventSource(url: urlRequest.url!, headers: urlRequest.allHTTPHeaderFields ?? [:])
 
         eventSource.connect()
 
-        return ListenPublisher<T>(eventSource: eventSource, reconnect: reconnect)
+        return ListenPublisher(eventSource: eventSource, reconnect: reconnect)
     }
 }
 
