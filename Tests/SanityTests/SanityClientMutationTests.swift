@@ -13,7 +13,8 @@ final class SanityClientMutationTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: false,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
         let transaction = SanityClient.Transaction(config: config, mutations: [
             .createIfNotExists(document: [

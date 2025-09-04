@@ -24,6 +24,7 @@ public class SanityClient {
         public let perspective: Perspective?
         public let token: String?
         public let useCdn: Bool
+        public let returnQuery: Bool
         
         public var apiHost: APIHost {
             // TODO: There are a few more conditions that will exclude CDN as a valid host, such as:
@@ -137,13 +138,22 @@ public class SanityClient {
             return getURLRequest(path: path, queryItems: queryItems)
         }
 
-        public init(projectId: String, dataset: String, version: APIVersion, perspective: Perspective?, useCdn: Bool, token: String?) {
+        public init(
+            projectId: String,
+            dataset: String,
+            version: APIVersion,
+            perspective: Perspective?,
+            useCdn: Bool,
+            token: String?,
+            returnQuery: Bool
+        ) {
             self.projectId = projectId
             self.dataset = dataset
             self.version = version
             self.perspective = perspective
             self.token = token
             self.useCdn = useCdn
+            self.returnQuery = returnQuery
         }
     }
 
@@ -163,6 +173,9 @@ public class SanityClient {
                     var items = [URLQueryItem(name: "query", value: query)]
                     if let perspective = config.perspective {
                         items.append(URLQueryItem(name: "perspective", value: perspective.rawValue))
+                    }
+                    if !config.returnQuery {
+                        items.append(URLQueryItem(name: "returnQuery", value: "false"))
                     }
                     addParams(params, to: &items)
 
@@ -246,8 +259,24 @@ public class SanityClient {
     /// - Warning: We encourage most users to use the api cdn for their front-ends unless there is a good reason not to.
     ///
     /// - Returns: SanityClient
-    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, perspective: Perspective? = nil, useCdn: Bool, token: String? = nil) {
-        self.config = Config(projectId: projectId, dataset: dataset, version: version, perspective: perspective, useCdn: useCdn, token: token)
+    public init(
+        projectId: String,
+        dataset: String,
+        version: Config.APIVersion = .v20210325,
+        perspective: Perspective? = nil,
+        useCdn: Bool,
+        token: String? = nil,
+        returnQuery: Bool = true
+    ) {
+        self.config = Config(
+            projectId: projectId,
+            dataset: dataset,
+            version: version,
+            perspective: perspective,
+            useCdn: useCdn,
+            token: token,
+            returnQuery: returnQuery
+        )
     }
 
     /// Constructs a groq query of type T
