@@ -21,8 +21,10 @@ public class SanityClient {
         public let projectId: String
         public let dataset: String
         public let version: APIVersion
+        public let perspective: Perspective?
         public let token: String?
         public let useCdn: Bool
+        
         public var apiHost: APIHost {
             // TODO: There are a few more conditions that will exclude CDN as a valid host, such as:
             // config with custom apihost domain
@@ -120,10 +122,11 @@ public class SanityClient {
             return getURLRequest(path: path, queryItems: queryItems)
         }
 
-        public init(projectId: String, dataset: String, version: APIVersion, useCdn: Bool, token: String?) {
+        public init(projectId: String, dataset: String, version: APIVersion, perspective: Perspective?, useCdn: Bool, token: String?) {
             self.projectId = projectId
             self.dataset = dataset
             self.version = version
+            self.perspective = perspective
             self.token = token
             self.useCdn = useCdn
         }
@@ -143,6 +146,9 @@ public class SanityClient {
                 switch self {
                 case let .fetch(query, params, config):
                     var items = [URLQueryItem(name: "query", value: query)]
+                    if let perspective = config.perspective {
+                        items.append(URLQueryItem(name: "perspective", value: perspective.rawValue))
+                    }
                     addParams(params, to: &items)
 
                     let path = "/data/query/\(config.dataset)"
@@ -218,14 +224,15 @@ public class SanityClient {
     /// - Parameter projectId: The project id to use
     /// - Parameter dataset: The dataset to use, see https://www.sanity.io/docs/datasets
     /// - Parameter version: The API version to use, see https://www.sanity.io/docs/api-versioning
+    /// - Parameter perspective: The perspective to use, see https://www.sanity.io/docs/content-lake/perspectives
     /// - Parameter useCdn: Whether or not to run query against the API CDN, see https://www.sanity.io/docs/api-cdn
     /// - Parameter token: Depending on your dataset configuration you might need an API token to query, see https://www.sanity.io/docs/keeping-your-data-safe
     ///
     /// - Warning: We encourage most users to use the api cdn for their front-ends unless there is a good reason not to.
     ///
     /// - Returns: SanityClient
-    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, useCdn: Bool, token: String? = nil) {
-        self.config = Config(projectId: projectId, dataset: dataset, version: version, useCdn: useCdn, token: token)
+    public init(projectId: String, dataset: String, version: Config.APIVersion = .v20210325, perspective: Perspective? = nil, useCdn: Bool, token: String? = nil) {
+        self.config = Config(projectId: projectId, dataset: dataset, version: version, perspective: perspective, useCdn: useCdn, token: token)
     }
 
     /// Constructs a groq query of type T
