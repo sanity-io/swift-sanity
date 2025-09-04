@@ -68,7 +68,7 @@ class MoviesFetcher: ObservableObject {
     @Published var movies: [Movie] = []
     @Published var error: Error? = nil
     @Published var ms: Int = 0
-    @Published var queryString: String = ""
+    @Published var queryString: String?
 
     private var fetchMoviesCancellable: AnyCancellable?
     private var listenMoviesCancellable: AnyCancellable?
@@ -313,7 +313,7 @@ struct ContentView: View {
                     ErrorView(error: error)
                 } else {
                     HStack {
-                        Text("query: \(self.moviesFetcher.queryString.trimmingCharacters(in: .whitespacesAndNewlines))")
+                        Text("query: \(self.moviesFetcher.queryString?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")")
                         Spacer()
                     }
                     HStack {

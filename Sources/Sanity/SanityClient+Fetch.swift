@@ -16,7 +16,9 @@ public extension SanityClient.Query where T: Decodable {
         public let ms: Int
 
         /// The submitted query
-        public let query: String
+        ///
+        /// If ``SanityClient.Config.returnQuery`` is set to false, this will be `nil`.
+        public let query: String?
 
         /// The query result
         public let result: R
@@ -25,7 +27,7 @@ public extension SanityClient.Query where T: Decodable {
             let container = try decoder.container(keyedBy: keys.self)
 
             self.ms = try container.decode(Int.self, forKey: .ms)
-            self.query = try container.decode(String.self, forKey: .query)
+            self.query = try container.decodeIfPresent(String.self, forKey: .query)
             self.result = try container.decode(R.self, forKey: .result)
         }
     }

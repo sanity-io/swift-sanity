@@ -13,11 +13,12 @@ final class SanityClientQueryTests: XCTestCase {
             version: .v1,
             perspective: .raw,
             useCdn: false,
-            token: nil
+            token: nil,
+            returnQuery: false
         )
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(query: "*", params: [:], config: config)
-        XCTAssertEqual(fetch.urlRequest.url?.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*&perspective=raw")
+        XCTAssertEqual(fetch.urlRequest.url?.absoluteString, "https://rwmuledy.api.sanity.io/v1/data/query/prod?query=*&perspective=raw&returnQuery=false")
     }
 
     func testQueryURLRequestAuthToken() {
@@ -27,7 +28,8 @@ final class SanityClientQueryTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: false,
-            token: "ABC"
+            token: "ABC",
+            returnQuery: true
         )
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(
@@ -63,7 +65,8 @@ final class SanityClientQueryTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: false,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
 
         let listen = SanityClient.Query<String>.apiURL.listen(
@@ -92,7 +95,8 @@ final class SanityClientQueryTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: false,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(

@@ -12,13 +12,15 @@ final class SanityClientTests: XCTestCase {
             dataset: "b",
             version: .v20210325,
             perspective: .published,
-            useCdn: true
+            useCdn: true,
+            returnQuery: false
         )
 
         XCTAssertEqual(client.config.projectId, "a")
         XCTAssertEqual(client.config.dataset, "b")
         XCTAssertEqual(client.config.version.string, "v2021-03-25")
         XCTAssertEqual(client.config.perspective, .published)
+        XCTAssertEqual(client.config.returnQuery, false)
     }
 
     // can use getURL() to get API-relative paths
@@ -51,7 +53,8 @@ final class SanityClientTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: true,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
 
         let query = String(repeating: "query!", count: 1)
@@ -70,7 +73,8 @@ final class SanityClientTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: true,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
 
         let query = String(repeating: "query!", count: 4000)
@@ -94,7 +98,8 @@ final class SanityClientTests: XCTestCase {
             version: .v1,
             perspective: nil,
             useCdn: false,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
         let client = SanityClient(config: config)
         XCTAssertEqual(client.config.getURL(path: "/").absoluteString, "https://rwmuledy.api.sanity.io/v1/")
@@ -108,23 +113,38 @@ final class SanityClientTests: XCTestCase {
         XCTAssertEqual(decodedImage, image)
     }
 
-    func testFileURL() throws {
+    func testFileURL() {
         let file = SanityType.File(asset: .init(_ref: "foo-bar-png", _type: "file"))
         let client = SanityClient(projectId: "rwmuledy", dataset: "some-dataset", version: .v1, useCdn: false)
         let url = client.fileURL(file)!
         XCTAssertEqual(url.absoluteString, "https://cdn.sanity.io/files/rwmuledy/some-dataset/bar.png")
     }
     
-    func testPerspective() throws {
+    func testPerspective() {
         let config = SanityClient.Config(
             projectId: "rwmuledy",
             dataset: "master",
             version: .v20250219,
             perspective: .drafts,
             useCdn: true,
-            token: nil
+            token: nil,
+            returnQuery: true
         )
         let request = SanityClient.Query<Any>.apiURL.fetch(query: "query!", params: [:], config: config).urlRequest
         XCTAssertEqual(request.url?.absoluteString, "https://rwmuledy.apicdn.sanity.io/v2025-02-19/data/query/master?query=query!&perspective=drafts")
+    }
+    
+    func testReturnQuery() {
+        let config = SanityClient.Config(
+            projectId: "rwmuledy",
+            dataset: "master",
+            version: .v20250219,
+            perspective: nil,
+            useCdn: true,
+            token: nil,
+            returnQuery: false
+        )
+        let request = SanityClient.Query<Any>.apiURL.fetch(query: "query!", params: [:], config: config).urlRequest
+        XCTAssertEqual(request.url?.absoluteString, "https://rwmuledy.apicdn.sanity.io/v2025-02-19/data/query/master?query=query!&returnQuery=false")
     }
 }
