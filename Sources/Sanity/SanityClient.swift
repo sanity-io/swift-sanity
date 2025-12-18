@@ -27,11 +27,7 @@ public class SanityClient {
         public let returnQuery: Bool
         
         public var apiHost: APIHost {
-            // TODO: There are a few more conditions that will exclude CDN as a valid host, such as:
-            // config with custom apihost domain
-            // Any request that isnt GET or HEAD
-            // Query Listening?
-            if useCdn == true, token == nil {
+            if useCdn == true {
                 return .productionCDN
             }
 
