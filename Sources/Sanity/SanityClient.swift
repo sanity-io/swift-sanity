@@ -8,7 +8,7 @@ import Foundation
 let kQuerySizeLimitPost = 11264
 
 public class SanityClient {
-    let urlSession = URLSession(configuration: .default)
+    public let urlSession: URLSession
 
     public let config: Config
 
@@ -237,10 +237,15 @@ public class SanityClient {
     /// Initalizes the Sanity Client
     ///
     /// - Parameter config: The SanityClient.Config object
+    /// - Parameter urlSession: The URLSession instance to use for any Sanity request
     ///
     /// - Returns: SanityClient
-    public init(config: Config) {
+    public init(
+        config: Config,
+        urlSession: URLSession = URLSession(configuration: .default)
+    ) {
         self.config = config
+        self.urlSession = urlSession
     }
 
     /// Initalizes the Sanity Client
@@ -251,6 +256,7 @@ public class SanityClient {
     /// - Parameter perspective: The perspective to use, see https://www.sanity.io/docs/content-lake/perspectives
     /// - Parameter useCdn: Whether or not to run query against the API CDN, see https://www.sanity.io/docs/api-cdn
     /// - Parameter token: Depending on your dataset configuration you might need an API token to query, see https://www.sanity.io/docs/keeping-your-data-safe
+    /// - Parameter urlSession: The URLSession instance to use for any Sanity request
     ///
     /// - Warning: We encourage most users to use the api cdn for their front-ends unless there is a good reason not to.
     ///
@@ -262,7 +268,8 @@ public class SanityClient {
         perspective: Perspective? = nil,
         useCdn: Bool,
         token: String? = nil,
-        returnQuery: Bool = true
+        returnQuery: Bool = true,
+        urlSession: URLSession = URLSession(configuration: .default)
     ) {
         self.config = Config(
             projectId: projectId,
@@ -273,6 +280,8 @@ public class SanityClient {
             token: token,
             returnQuery: returnQuery
         )
+        
+        self.urlSession = urlSession
     }
 
     /// Constructs a groq query of type T
