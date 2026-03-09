@@ -200,15 +200,17 @@ public class SanityClient {
                 params
                     .sorted { $0.key < $1.key }
                     .forEach { param in
-                        let value: String
-                        if param.value is String {
-                            value = "\"\(param.value)\""
-                        } else {
-                            value = String(describing: param.value)
-                        }
-                        let queryItem = URLQueryItem(name: "$\(param.key)", value: value)
+                        let queryItem = URLQueryItem(name: "$\(param.key)", value: Self.jsonEncode(param.value))
                         queryItems.append(queryItem)
                     }
+            }
+
+            static func jsonEncode(_ value: Any) -> String {
+                guard let data = try? JSONSerialization.data(withJSONObject: value, options: .fragmentsAllowed),
+                      let json = String(data: data, encoding: .utf8) else {
+                    fatalError("Unsupported GROQ parameter type: \(type(of: value)). Parameters must be JSON-compatible (String, Number, Bool, Array, Dictionary, or NSNull).")
+                }
+                return json
             }
 
             private func getURLForPaths(_ paths: [String], queryItems: [URLQueryItem], config: Config) -> URL {
