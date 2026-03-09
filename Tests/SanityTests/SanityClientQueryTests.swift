@@ -112,6 +112,36 @@ final class SanityClientQueryTests: XCTestCase {
         XCTAssertEqual(kustom, "29")
 
         let another = components.queryItems?.first(where: { $0.name == "$another" })?.value
-        XCTAssertEqual(another, "one")
+        XCTAssertEqual(another, "\"one\"")
+    }
+
+    func testStringParamsAreQuotedNumericParamsAreNot() {
+        let config = SanityClient.Config(
+            projectId: "a",
+            dataset: "b",
+            version: .v1,
+            perspective: nil,
+            useCdn: false,
+            token: nil,
+            returnQuery: true
+        )
+
+        let fetch = SanityClient.Query<String>.apiURL.fetch(
+            query: "*",
+            params: ["lang": "en-us", "limit": 10, "active": true],
+            config: config
+        )
+
+        let url = fetch.urlRequest.url!
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+
+        let lang = components.queryItems?.first(where: { $0.name == "$lang" })?.value
+        XCTAssertEqual(lang, "\"en-us\"")
+
+        let limit = components.queryItems?.first(where: { $0.name == "$limit" })?.value
+        XCTAssertEqual(limit, "10")
+
+        let active = components.queryItems?.first(where: { $0.name == "$active" })?.value
+        XCTAssertEqual(active, "true")
     }
 }

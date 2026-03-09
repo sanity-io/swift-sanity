@@ -200,7 +200,13 @@ public class SanityClient {
                 params
                     .sorted { $0.key < $1.key }
                     .forEach { param in
-                        let queryItem = URLQueryItem(name: "$\(param.key)", value: String(describing: param.value))
+                        let value: String
+                        if param.value is String {
+                            value = "\"\(param.value)\""
+                        } else {
+                            value = String(describing: param.value)
+                        }
+                        let queryItem = URLQueryItem(name: "$\(param.key)", value: value)
                         queryItems.append(queryItem)
                     }
             }
