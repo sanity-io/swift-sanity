@@ -115,7 +115,40 @@ final class SanityClientQueryTests: XCTestCase {
         XCTAssertEqual(another, "\"one\"")
     }
 
-    func testStringParamsAreQuotedNumericParamsAreNot() {
+    func testJsonEncodeString() {
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode("hello"), "\"hello\"")
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode("with \"quotes\""), "\"with \\\"quotes\\\"\"")
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode("new\nline"), "\"new\\nline\"")
+    }
+
+    func testJsonEncodeNumber() {
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode(42), "42")
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode(3.5), "3.5")
+    }
+
+    func testJsonEncodeBool() {
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode(true), "true")
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode(false), "false")
+    }
+
+    func testJsonEncodeNull() {
+        XCTAssertEqual(SanityClient.Query<String>.apiURL.jsonEncode(NSNull()), "null")
+    }
+
+    func testJsonEncodeArray() {
+        let result = SanityClient.Query<String>.apiURL.jsonEncode([1, 2, 3])
+        XCTAssertEqual(result, "[1,2,3]")
+
+        let doubles = SanityClient.Query<String>.apiURL.jsonEncode([0.5, 1.5, 2.5])
+        XCTAssertEqual(doubles, "[0.5,1.5,2.5]")
+    }
+
+    func testJsonEncodeObject() {
+        let result = SanityClient.Query<String>.apiURL.jsonEncode(["title": "hello"])
+        XCTAssertEqual(result, "{\"title\":\"hello\"}")
+    }
+
+    func testParamsSerializedAsJson() {
         let config = SanityClient.Config(
             projectId: "a",
             dataset: "b",
@@ -128,20 +161,21 @@ final class SanityClientQueryTests: XCTestCase {
 
         let fetch = SanityClient.Query<String>.apiURL.fetch(
             query: "*",
-            params: ["lang": "en-us", "limit": 10, "active": true],
+            params: ["lang": "en-us", "limit": 10, "active": true, "tags": ["a", "b"], "empty": NSNull()],
             config: config
         )
 
         let url = fetch.urlRequest.url!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
 
-        let lang = components.queryItems?.first(where: { $0.name == "$lang" })?.value
-        XCTAssertEqual(lang, "\"en-us\"")
+        func param(_ name: String) -> String? {
+            components.queryItems?.first(where: { $0.name == "$\(name)" })?.value
+        }
 
-        let limit = components.queryItems?.first(where: { $0.name == "$limit" })?.value
-        XCTAssertEqual(limit, "10")
-
-        let active = components.queryItems?.first(where: { $0.name == "$active" })?.value
-        XCTAssertEqual(active, "true")
+        XCTAssertEqual(param("lang"), "\"en-us\"")
+        XCTAssertEqual(param("limit"), "10")
+        XCTAssertEqual(param("active"), "true")
+        XCTAssertEqual(param("tags"), "[\"a\",\"b\"]")
+        XCTAssertEqual(param("empty"), "null")
     }
 }
