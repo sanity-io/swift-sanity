@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Force xcode 15.0.1
         run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app
